@@ -70,7 +70,10 @@ export default class SkillFlowPlugin extends Plugin {
 			{
 				label: BUILTIN_FIX_SPELLING.name,
 				icon: BUILTIN_FIX_SPELLING.icon,
-				onClick: () => this.runWithReadyProvider((provider) => void executeSkill(this.app, provider, BUILTIN_FIX_SPELLING)),
+				onClick: () =>
+					this.runWithReadyProvider((provider) =>
+						void executeSkill(this.app, provider, BUILTIN_FIX_SPELLING, this.settings.github),
+					),
 			},
 			{
 				label: BUILTIN_ORGANIZE_TAGS_META.name,
@@ -85,7 +88,10 @@ export default class SkillFlowPlugin extends Plugin {
 		const userSkillRows: StatusBarMenuRow[] = userSkills.map((skill) => ({
 			label: skill.name,
 			icon: skill.icon,
-			onClick: () => this.runWithReadyProvider((provider) => void executeSkill(this.app, provider, skill)),
+			onClick: () =>
+				this.runWithReadyProvider((provider) =>
+					void executeSkill(this.app, provider, skill, this.settings.github),
+				),
 		}));
 
 		const manageRows: StatusBarMenuRow[] = [

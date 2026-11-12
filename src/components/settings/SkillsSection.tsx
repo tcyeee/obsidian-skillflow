@@ -147,7 +147,7 @@ export function SkillsSection({ app, plugin, onRequestProvidersTab }: SkillsSect
 						</li>
 					)}
 					{skills.map((skill) => {
-						const level = computePermissionLevel(skill.tools);
+						const level = computePermissionLevel(skill.tools, skill.output.mode);
 						return (
 							<li key={skill.id} className="skillflow-skill-row" onClick={() => void openSkillFile(app, skill)}>
 								<div className="skillflow-skill-row__icon">
