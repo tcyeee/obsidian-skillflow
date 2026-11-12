@@ -27,6 +27,11 @@ export default class SkillFlowPlugin extends Plugin {
 
 		const statusBarItem = this.addStatusBarItem();
 		statusBarItem.addClass("mod-clickable");
+		// Stable hook a host plugin can target in CSS to hide this icon after folding
+		// `getStatusBarMenuGroups()` into its own menu (see minimalism-ui's styles.css).
+		// A CSS rule survives this item being torn down and recreated on reload/toggle,
+		// unlike a one-time imperative hide call.
+		statusBarItem.addClass("skillflow-status-bar-icon");
 		setIcon(statusBarItem, SKILLFLOW_ICON_ID);
 		statusBarItem.addEventListener("click", (evt: MouseEvent) =>
 			void this.showSkillsMenu(evt.currentTarget as HTMLElement),
@@ -49,6 +54,18 @@ export default class SkillFlowPlugin extends Plugin {
 	}
 
 	private async showSkillsMenu(triggerEl: HTMLElement) {
+		const groups = await this.getStatusBarMenuGroups();
+		this.statusBarMenu.toggle(triggerEl, groups);
+	}
+
+	/**
+	 * Builds the same three row groups shown in this plugin's own status-bar
+	 * popover (builtin skills / user skills / manage actions). Exposed so a
+	 * host plugin (e.g. minimalism-ui) can fold these into its own menu
+	 * instead of — not in addition to — this plugin's status-bar icon; see
+	 * `hideStatusBarIcon()`.
+	 */
+	async getStatusBarMenuGroups(): Promise<StatusBarMenuRow[][]> {
 		const builtinRows: StatusBarMenuRow[] = [
 			{
 				label: BUILTIN_FIX_SPELLING.name,
@@ -84,7 +101,7 @@ export default class SkillFlowPlugin extends Plugin {
 			},
 		];
 
-		this.statusBarMenu.toggle(triggerEl, [builtinRows, userSkillRows, manageRows]);
+		return [builtinRows, userSkillRows, manageRows];
 	}
 
 	/** Shared guard for every menu action that needs to call an LLM. */
