@@ -28,7 +28,7 @@ function skillFilePath(id: string): string {
 	return `${skillFolderPath(id)}/SKILL.md`;
 }
 
-async function ensureFolder(app: App, path: string): Promise<void> {
+export async function ensureFolder(app: App, path: string): Promise<void> {
 	if (app.vault.getAbstractFileByPath(path)) return;
 	const segments = path.split("/");
 	let current = "";

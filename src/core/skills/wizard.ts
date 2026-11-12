@@ -126,7 +126,7 @@ function extractJson(text: string): unknown {
 	return JSON.parse(candidate.trim());
 }
 
-function requireModel(provider: LLMProvider): string {
+export function requireModel(provider: LLMProvider): string {
 	const model = provider.model?.trim();
 	if (!model) {
 		throw new Error(`请先在 Provider "${provider.id}" 的设置里填写 Default model。`);
