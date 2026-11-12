@@ -1,9 +1,13 @@
-import { App } from "obsidian";
+import { App, Menu } from "obsidian";
+import type { MouseEvent } from "react";
 
+import { getProviderIdentity } from "../../constants/provider-catalog";
 import { PROVIDER_PRESET_INFO } from "../../constants/provider-presets";
 import { useSettings } from "../../contexts/settings-context";
 import type SkillFlowPlugin from "../../main";
 import { LLMProvider } from "../../types/provider.types";
+import { ObsidianIcon } from "../common/ObsidianIcon";
+import { ProviderIcon } from "../common/ProviderIcon";
 
 import { EditProviderModal } from "./ProviderFormModal";
 import { ProviderPickerModal } from "./ProviderPickerModal";
@@ -13,9 +17,18 @@ type ProvidersSectionProps = {
 	plugin: SkillFlowPlugin;
 };
 
+function isProviderReady(provider: LLMProvider): boolean {
+	const requiresKey = PROVIDER_PRESET_INFO[provider.presetType].requireApiKey;
+	return !requiresKey || !!provider.apiKey;
+}
+
 // Mirrors obsidian-yolo's ProvidersSection (src/components/settings/sections/ProvidersSection.tsx):
-// a table of configured providers plus an "Add provider" action that opens
+// a list of configured providers plus an "Add provider" action that opens
 // the picker, trimmed down to the fields SkillFlow actually uses.
+//
+// Rendered as an identity list rather than a data table: each row carries the
+// same monogram + tint used in the picker grid, so a provider reads as "the
+// same thing" whether you're choosing it or reviewing it.
 export function ProvidersSection({ app, plugin }: ProvidersSectionProps) {
 	const { settings, setSettings } = useSettings();
 
@@ -26,76 +39,101 @@ export function ProvidersSection({ app, plugin }: ProvidersSectionProps) {
 		});
 	};
 
-	return (
-		<div className="skillflow-settings-section">
-			<div className="skillflow-settings-header">Model providers</div>
-			<div className="skillflow-settings-desc">
-				Connect SkillFlow to the AI models your Skills run on.
-			</div>
+	const openRowMenu = (event: MouseEvent, provider: LLMProvider) => {
+		event.stopPropagation();
+		const menu = new Menu();
+		menu.addItem((item) =>
+			item.setTitle("Edit").setIcon("pencil").onClick(() => new EditProviderModal(app, plugin, provider).open()),
+		);
+		menu.addSeparator();
+		menu.addItem((item) =>
+			item
+				.setTitle("Delete")
+				.setIcon("trash-2")
+				.setWarning(true)
+				.onClick(() => handleDelete(provider)),
+		);
+		menu.showAtMouseEvent(event.nativeEvent);
+	};
 
-			<div className="skillflow-settings-table-container">
-				<table className="skillflow-settings-table">
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Type</th>
-							<th>Model</th>
-							<th>API Key</th>
-							<th>Actions</th>
-						</tr>
-					</thead>
-					<tbody>
-						{settings.providers.map((provider) => (
-							<tr key={provider.id}>
-								<td>{provider.id}</td>
-								<td>{PROVIDER_PRESET_INFO[provider.presetType].label}</td>
-								<td>{provider.model || "—"}</td>
-								<td>
-									<button
-										type="button"
-										className="clickable-icon"
-										onClick={() => new EditProviderModal(app, plugin, provider).open()}
-									>
-										{provider.apiKey ? "••••••••" : "Set API key"}
-									</button>
-								</td>
-								<td>
-									<div className="skillflow-settings-actions">
-										<button
-											type="button"
-											className="clickable-icon"
-											onClick={() => new EditProviderModal(app, plugin, provider).open()}
-										>
-											Edit
-										</button>
-										<button
-											type="button"
-											className="clickable-icon skillflow-settings-danger"
-											onClick={() => handleDelete(provider)}
-										>
-											Delete
-										</button>
-									</div>
-								</td>
-							</tr>
-						))}
-						{settings.providers.length === 0 && (
-							<tr>
-								<td colSpan={5} className="skillflow-settings-empty">
-									No providers configured yet.
-								</td>
-							</tr>
-						)}
-					</tbody>
-				</table>
+	return (
+		<div className="skillflow-providers">
+			<div className="skillflow-providers__header">
+				<div>
+					<div className="skillflow-providers__title">Model providers</div>
+					<div className="skillflow-providers__desc">
+						Connect SkillFlow to the models your Skills run on.
+					</div>
+				</div>
 				<button
 					type="button"
-					className="mod-cta skillflow-settings-add-provider"
+					className="mod-cta skillflow-providers__add"
 					onClick={() => new ProviderPickerModal(app, plugin).open()}
 				>
+					<ObsidianIcon icon="plus" />
 					Add provider
 				</button>
 			</div>
+
+			{settings.providers.length === 0 ? (
+				<div className="skillflow-providers__empty">
+					<ObsidianIcon icon="plug-zap" className="skillflow-providers__empty-icon" />
+					<div className="skillflow-providers__empty-title">No providers yet</div>
+					<div className="skillflow-providers__empty-desc">
+						Skills need a model to run on. Add a provider to get started.
+					</div>
+					<button
+						type="button"
+						className="mod-cta"
+						onClick={() => new ProviderPickerModal(app, plugin).open()}
+					>
+						Add provider
+					</button>
+				</div>
+			) : (
+				<ul className="skillflow-provider-list">
+					{settings.providers.map((provider) => {
+						const identity = getProviderIdentity(provider);
+						const ready = isProviderReady(provider);
+						return (
+							<li
+								key={provider.id}
+								className="skillflow-provider-row"
+								onClick={() => new EditProviderModal(app, plugin, provider).open()}
+							>
+								<div className="skillflow-provider-row__icon" data-tint={identity.tint}>
+									<ProviderIcon
+										icon={identity.icon}
+										monogram={identity.monogram}
+										className="skillflow-provider-row__icon-svg"
+									/>
+								</div>
+								<div className="skillflow-provider-row__main">
+									<div className="skillflow-provider-row__id">{provider.id}</div>
+									<div className="skillflow-provider-row__model">
+										{provider.model || "No default model set"}
+									</div>
+								</div>
+								<div
+									className="skillflow-provider-row__status"
+									data-state={ready ? "ok" : "warn"}
+								>
+									<span className="skillflow-provider-row__dot" />
+									{ready ? "Connected" : "Needs API key"}
+								</div>
+								<button
+									type="button"
+									className="clickable-icon skillflow-provider-row__menu"
+									aria-label="Provider actions"
+									onClick={(event) => openRowMenu(event, provider)}
+								>
+									<ObsidianIcon icon="more-vertical" />
+								</button>
+							</li>
+						);
+					})}
+				</ul>
+			)}
 		</div>
 	);
 }
