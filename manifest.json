@@ -1,0 +1,10 @@
+{
+	"id": "skillflow",
+	"name": "SkillFlow",
+	"version": "0.0.1",
+	"minAppVersion": "1.4.0",
+	"description": "Turn AI Skills into one-click menu items inside Obsidian.",
+	"author": "tcyeee",
+	"authorUrl": "",
+	"isDesktopOnly": true
+}

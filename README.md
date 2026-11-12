@@ -1,8 +1,8 @@
-# SkillsFlow
+# SkillFlow
 
 **Turn AI Skills into one-click menu items inside Obsidian.** No chat window, no re-typing the same prompt — every Skill acts on your current note (or selection) the moment you click it.
 
-> ⚠️ **Status: early concept / pre-alpha.** SkillsFlow is currently a product spec (see [`TODO.md`](./TODO.md)) with no working code yet. This repo tracks the design and will grow into an actual Obsidian plugin starting with the V0.1 milestone below.
+> ⚠️ **Status: early concept / pre-alpha.** SkillFlow is currently a product spec (see [`TODO.md`](./TODO.md)) with no working code yet. This repo tracks the design and will grow into an actual Obsidian plugin starting with the V0.1 milestone below.
 
 ## Why
 
@@ -15,11 +15,11 @@ Existing ways to use AI in Obsidian all add friction:
 | Command palette | You have to remember and search for commands |
 | External agents / MCP | Doesn't naturally see your current note or selection |
 
-SkillsFlow's premise: **AI should live inside the tools you already use, not force you into a chat window.**
+SkillFlow's premise: **AI should live inside the tools you already use, not force you into a chat window.**
 
 ## How it works
 
-A Skill is a plain Markdown file with metadata + instructions. Installed Skills show up as menu items. Click one and SkillsFlow builds context from your current note, runs the model, and shows you a diff before writing anything back.
+A Skill is a plain Markdown file with metadata + instructions. Installed Skills show up as menu items. Click one and SkillFlow builds context from your current note, runs the model, and shows you a diff before writing anything back.
 
 ```mermaid
 flowchart LR
@@ -106,7 +106,7 @@ See [`TODO.md`](./TODO.md) for the full product spec, including entry points, in
 
 ## Security & permissions
 
-SkillsFlow treats any downloaded Skill as untrusted by default:
+SkillFlow treats any downloaded Skill as untrusted by default:
 
 - Permissions are deny-by-default and must be declared in frontmatter; the user grants them explicitly on first run.
 - Every tool call is re-checked against granted permissions at runtime — a model can't talk its way around a declared scope.
