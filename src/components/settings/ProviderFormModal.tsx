@@ -1,7 +1,8 @@
 import { App, Notice } from "obsidian";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { PROVIDER_CATALOG } from "../../constants/provider-catalog";
+import { FALLBACK_MODELS_BY_PRESET } from "../../constants/provider-models";
 import { PROVIDER_PRESET_INFO } from "../../constants/provider-presets";
 import type SkillFlowPlugin from "../../main";
 import {
@@ -11,11 +12,16 @@ import {
 	llmProviderSchema,
 } from "../../types/provider.types";
 import { getDefaultBaseUrlForPreset, resolveProviderPrimaryRequestUrl } from "../../utils/llm/provider-base-url";
+import { fetchProviderModels } from "../../utils/llm/fetch-models";
 import { ObsidianButton } from "../common/ObsidianButton";
 import { ObsidianDropdown } from "../common/ObsidianDropdown";
 import { ObsidianSetting } from "../common/ObsidianSetting";
 import { ObsidianTextInput } from "../common/ObsidianTextInput";
 import { ReactModal } from "../common/ReactModal";
+
+// Sentinel option in the model dropdown for "type it in myself" (models the
+// live list and the fallback list both miss).
+const CUSTOM_MODEL_OPTION = "__custom__";
 
 type ProviderFormProps = {
 	plugin: SkillFlowPlugin;
@@ -108,6 +114,40 @@ function ProviderFormComponent({
 		formData.presetType === "openai-compatible" ? undefined : PROVIDER_CATALOG[formData.presetType].apiKeyUrl;
 	const primaryRequestUrlPreview = resolveProviderPrimaryRequestUrl(formData);
 
+	const [liveModels, setLiveModels] = useState<string[]>([]);
+	const [modelsLoading, setModelsLoading] = useState(false);
+	const [modelsError, setModelsError] = useState<string | null>(null);
+
+	const loadModels = (target: LLMProvider) => {
+		setModelsLoading(true);
+		setModelsError(null);
+		void fetchProviderModels(target)
+			.then((models) => setLiveModels(models))
+			.catch((error: unknown) => {
+				setLiveModels([]);
+				setModelsError(error instanceof Error ? error.message : "Failed to load models.");
+			})
+			.finally(() => setModelsLoading(false));
+	};
+
+	// Try once on open, using whatever base URL / API key the form already has
+	// (e.g. an existing provider being edited). The refresh button re-runs this
+	// with the form's current values after the user tweaks them.
+	useEffect(() => {
+		loadModels(formData);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const fallbackModels = FALLBACK_MODELS_BY_PRESET[formData.presetType] ?? [];
+	const curatedModels = liveModels.length > 0 ? liveModels : fallbackModels;
+	const currentModel = formData.model ?? "";
+	const modelDropdownOptions: Record<string, string> = {
+		...Object.fromEntries(curatedModels.map((model) => [model, model])),
+		...(currentModel && !curatedModels.includes(currentModel) ? { [currentModel]: currentModel } : {}),
+		[CUSTOM_MODEL_OPTION]: "Custom model ID…",
+	};
+	const isCustomModel = !curatedModels.includes(currentModel);
+
 	const handleSubmit = () => {
 		const isDuplicateId = plugin.settings.providers.some(
 			(p) => p.id === formData.id && p.id !== provider?.id,
@@ -150,16 +190,17 @@ function ProviderFormComponent({
 					options={PRESET_OPTIONS}
 					onChange={(value) => {
 						const nextPreset = value as LLMProviderPresetType;
-						setFormData((prev) => {
-							const idIsSuggested = !provider && prev.id === suggestProviderId(plugin, prev.presetType);
-							return {
-								...prev,
-								...(idIsSuggested ? { id: suggestProviderId(plugin, nextPreset) } : {}),
-								presetType: nextPreset,
-								apiType: getDefaultApiTypeForPresetType(nextPreset),
-								baseUrl: getDefaultBaseUrlForPreset(nextPreset) ?? "",
-							};
-						});
+						const idIsSuggested = !provider && formData.id === suggestProviderId(plugin, formData.presetType);
+						const next: LLMProvider = {
+							...formData,
+							...(idIsSuggested ? { id: suggestProviderId(plugin, nextPreset) } : {}),
+							presetType: nextPreset,
+							apiType: getDefaultApiTypeForPresetType(nextPreset),
+							baseUrl: getDefaultBaseUrlForPreset(nextPreset) ?? "",
+						};
+						setFormData(next);
+						setLiveModels([]);
+						loadModels(next);
 					}}
 				/>
 			</ObsidianSetting>
@@ -196,13 +237,36 @@ function ProviderFormComponent({
 				</div>
 			)}
 
-			<ObsidianSetting name="Default model" desc="The model ID Skills will use when calling this provider.">
-				<ObsidianTextInput
-					value={formData.model ?? ""}
-					placeholder="gpt-4o-mini"
-					onChange={(value) => setFormData((prev) => ({ ...prev, model: value }))}
+			<ObsidianSetting
+				name="Default model"
+				desc={
+					modelsLoading
+						? "Loading available models…"
+						: modelsError
+							? liveModels.length === 0 && fallbackModels.length > 0
+								? `Couldn't reach the provider, showing common defaults (${modelsError}).`
+								: `Couldn't load the model list (${modelsError}). Pick "Custom model ID…" to type one in.`
+							: "The model Skills will use when calling this provider."
+				}
+			>
+				<ObsidianDropdown
+					value={isCustomModel ? CUSTOM_MODEL_OPTION : currentModel}
+					options={modelDropdownOptions}
+					onChange={(value) =>
+						setFormData((prev) => ({ ...prev, model: value === CUSTOM_MODEL_OPTION ? "" : value }))
+					}
 				/>
+				<ObsidianButton text={modelsLoading ? "Loading…" : "Refresh"} onClick={() => loadModels(formData)} />
 			</ObsidianSetting>
+			{isCustomModel && (
+				<ObsidianSetting name="Custom model ID">
+					<ObsidianTextInput
+						value={currentModel}
+						placeholder="gpt-4o-mini"
+						onChange={(value) => setFormData((prev) => ({ ...prev, model: value }))}
+					/>
+				</ObsidianSetting>
+			)}
 
 			<ObsidianSetting>
 				<ObsidianButton text={provider ? "Save" : "Add"} onClick={handleSubmit} cta />

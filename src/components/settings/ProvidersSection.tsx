@@ -2,10 +2,10 @@ import { App, Menu } from "obsidian";
 import type { MouseEvent } from "react";
 
 import { getProviderIdentity } from "../../constants/provider-catalog";
-import { PROVIDER_PRESET_INFO } from "../../constants/provider-presets";
 import { useSettings } from "../../contexts/settings-context";
 import type SkillFlowPlugin from "../../main";
 import { LLMProvider } from "../../types/provider.types";
+import { isProviderReady } from "../../utils/llm/provider-ready";
 import { ObsidianIcon } from "../common/ObsidianIcon";
 import { ProviderIcon } from "../common/ProviderIcon";
 
@@ -16,11 +16,6 @@ type ProvidersSectionProps = {
 	app: App;
 	plugin: SkillFlowPlugin;
 };
-
-function isProviderReady(provider: LLMProvider): boolean {
-	const requiresKey = PROVIDER_PRESET_INFO[provider.presetType].requireApiKey;
-	return !requiresKey || !!provider.apiKey;
-}
 
 // Mirrors obsidian-yolo's ProvidersSection (src/components/settings/sections/ProvidersSection.tsx):
 // a list of configured providers plus an "Add provider" action that opens
