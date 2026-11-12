@@ -824,3 +824,56 @@
 	overflow-y: auto;
 	min-width: 28em;
 }
+
+/* Status bar skills menu — self-drawn popover per the status-bar-menu
+   reference in "Obsidian交互菜单设计规范.md": fixed width, 16px radius,
+   light shadow, bordered, click-to-open/close, icon+label rows grouped by
+   dividers (no section titles). Not the native Obsidian Menu. */
+
+.skillflow-status-popover {
+	position: fixed;
+	z-index: var(--layer-popover);
+	display: flex;
+	flex-direction: column;
+	padding: 8px;
+	border-radius: 16px;
+	border: 1px solid var(--background-modifier-border);
+	background: var(--background-primary);
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.skillflow-status-popover-row {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 8px;
+	border-radius: 8px;
+	color: var(--text-normal);
+	cursor: pointer;
+}
+
+.skillflow-status-popover-row:hover,
+.skillflow-status-popover-row:focus-visible {
+	background: var(--background-modifier-hover);
+}
+
+.skillflow-status-popover-row:focus-visible {
+	outline: 2px solid var(--interactive-accent);
+	outline-offset: 1px;
+}
+
+.skillflow-status-popover-row-icon {
+	display: flex;
+	flex-shrink: 0;
+	color: var(--text-muted);
+}
+
+.skillflow-status-popover-row-label {
+	flex: 1;
+}
+
+.skillflow-status-popover-divider {
+	height: 1px;
+	margin: 4px 0;
+	background: var(--background-modifier-border);
+}

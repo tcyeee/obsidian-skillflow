@@ -1,5 +1,7 @@
-import { addIcon, App, Menu, Notice, Plugin, setIcon } from "obsidian";
+import { addIcon, App, Notice, Plugin, setIcon } from "obsidian";
+import { StatusBarMenuManager, StatusBarMenuRow } from "./components/common/StatusBarMenu";
 import { CreateSkillModal } from "./components/settings/CreateSkillModal";
+import type { SettingsTabId } from "./components/settings/SettingsNav";
 import { BUILTIN_FIX_SPELLING, BUILTIN_ORGANIZE_TAGS_META } from "./core/skills/builtins";
 import { listSkills } from "./core/skills/registry";
 import { executeSkill } from "./core/skills/runtime";
@@ -13,6 +15,7 @@ import { isProviderReady } from "./utils/llm/provider-ready";
 export default class SkillFlowPlugin extends Plugin {
 	settings: SkillFlowSettings = DEFAULT_SETTINGS;
 	private settingTab: SkillFlowSettingTab | null = null;
+	private readonly statusBarMenu = new StatusBarMenuManager();
 
 	async onload() {
 		this.settings = { ...DEFAULT_SETTINGS, ...(await this.loadData()) };
@@ -26,15 +29,17 @@ export default class SkillFlowPlugin extends Plugin {
 		statusBarItem.addClass("mod-clickable");
 		setIcon(statusBarItem, SKILLFLOW_ICON_ID);
 		statusBarItem.addEventListener("click", (evt: MouseEvent) =>
-			void this.showSkillsMenu(evt),
+			void this.showSkillsMenu(evt.currentTarget as HTMLElement),
 		);
 
 		this.addRibbonIcon(SKILLFLOW_ICON_ID, "SkillFlow", (evt: MouseEvent) =>
-			void this.showSkillsMenu(evt),
+			void this.showSkillsMenu(evt.currentTarget as HTMLElement),
 		);
 	}
 
-	onunload() {}
+	onunload() {
+		this.statusBarMenu.close();
+	}
 
 	/** Persists settings and refreshes the settings tab if it's mounted. */
 	async setSettings(newSettings: SkillFlowSettings): Promise<void> {
@@ -43,52 +48,43 @@ export default class SkillFlowPlugin extends Plugin {
 		this.settingTab?.display();
 	}
 
-	private async showSkillsMenu(evt: MouseEvent) {
-		const menu = new Menu();
-
-		menu.addItem((item) =>
-			item
-				.setTitle(BUILTIN_FIX_SPELLING.name)
-				.setIcon(BUILTIN_FIX_SPELLING.icon)
-				.onClick(() => this.runWithReadyProvider((provider) => void executeSkill(this.app, provider, BUILTIN_FIX_SPELLING))),
-		);
-		menu.addItem((item) =>
-			item
-				.setTitle(BUILTIN_ORGANIZE_TAGS_META.name)
-				.setIcon(BUILTIN_ORGANIZE_TAGS_META.icon)
-				.onClick(() => this.runWithReadyProvider((provider) => void runOrganizeTagsSkill(this.app, provider))),
-		);
+	private async showSkillsMenu(triggerEl: HTMLElement) {
+		const builtinRows: StatusBarMenuRow[] = [
+			{
+				label: BUILTIN_FIX_SPELLING.name,
+				icon: BUILTIN_FIX_SPELLING.icon,
+				onClick: () => this.runWithReadyProvider((provider) => void executeSkill(this.app, provider, BUILTIN_FIX_SPELLING)),
+			},
+			{
+				label: BUILTIN_ORGANIZE_TAGS_META.name,
+				icon: BUILTIN_ORGANIZE_TAGS_META.icon,
+				onClick: () => this.runWithReadyProvider((provider) => void runOrganizeTagsSkill(this.app, provider)),
+			},
+		];
 
 		// F-204 (TODO.md §7.2): every saved user Skill shows up here automatically,
 		// no restart or manual "pin" step needed.
 		const userSkills = await listSkills(this.app);
-		if (userSkills.length) {
-			menu.addSeparator();
-			for (const skill of userSkills) {
-				menu.addItem((item) =>
-					item
-						.setTitle(skill.name)
-						.setIcon(skill.icon)
-						.onClick(() => this.runWithReadyProvider((provider) => void executeSkill(this.app, provider, skill))),
-				);
-			}
-		}
+		const userSkillRows: StatusBarMenuRow[] = userSkills.map((skill) => ({
+			label: skill.name,
+			icon: skill.icon,
+			onClick: () => this.runWithReadyProvider((provider) => void executeSkill(this.app, provider, skill)),
+		}));
 
-		menu.addSeparator();
-		menu.addItem((item) =>
-			item
-				.setTitle("新建 Skills")
-				.setIcon("plus")
-				.onClick(() => new CreateSkillModal(this.app, this, userSkills, () => {}).open()),
-		);
-		menu.addItem((item) =>
-			item
-				.setTitle("管理 Skills")
-				.setIcon("settings")
-				.onClick(() => this.openSettings()),
-		);
+		const manageRows: StatusBarMenuRow[] = [
+			{
+				label: "新建 Skills",
+				icon: "plus",
+				onClick: () => new CreateSkillModal(this.app, this, userSkills, () => {}).open(),
+			},
+			{
+				label: "管理 Skills",
+				icon: "settings",
+				onClick: () => this.openSettings("skills"),
+			},
+		];
 
-		menu.showAtMouseEvent(evt);
+		this.statusBarMenu.toggle(triggerEl, [builtinRows, userSkillRows, manageRows]);
 	}
 
 	/** Shared guard for every menu action that needs to call an LLM. */
@@ -101,8 +97,9 @@ export default class SkillFlowPlugin extends Plugin {
 		run(provider);
 	}
 
-	/** Opens Obsidian's settings window to this plugin's tab. */
-	private openSettings(): void {
+	/** Opens Obsidian's settings window to this plugin's tab, optionally to a specific sub-tab. */
+	private openSettings(tab?: SettingsTabId): void {
+		if (tab) this.settingTab?.openToTab(tab);
 		const setting = (
 			this.app as App & {
 				setting: { open: () => void; openTabById: (id: string) => void };
