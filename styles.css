@@ -7,7 +7,11 @@
 	border-bottom: 1px solid var(--background-modifier-border);
 }
 
-.skillflow-nav__tab {
+/* Scoped under .skillflow-nav (not just .skillflow-nav__tab) so these
+   selectors outrank Obsidian's own `button:not(.clickable-icon)` rule
+   (specificity 0,1,1), which otherwise wins and paints the tabs as default
+   gray buttons instead of flat underline tabs. */
+.skillflow-nav .skillflow-nav__tab {
 	display: flex;
 	align-items: center;
 	gap: 0.45em;
@@ -22,13 +26,13 @@
 	box-shadow: none;
 }
 
-.skillflow-nav__tab:hover {
+.skillflow-nav .skillflow-nav__tab:hover {
 	color: var(--text-normal);
 	background: transparent;
 	box-shadow: none;
 }
 
-.skillflow-nav__tab[data-active="true"] {
+.skillflow-nav .skillflow-nav__tab[data-active="true"] {
 	color: var(--text-normal);
 	border-bottom-color: var(--interactive-accent);
 	font-weight: 500;
@@ -251,15 +255,19 @@
 	margin-bottom: 1em;
 }
 
-.skillflow-provider-picker__chip {
+/* Scoped under .skillflow-provider-picker__chips so this outranks
+   Obsidian's `button:not(.clickable-icon)` background/box-shadow — see the
+   comment on .skillflow-nav above. */
+.skillflow-provider-picker__chips .skillflow-provider-picker__chip {
 	border: 1px solid var(--background-modifier-border);
 	border-radius: 999px;
 	padding: 0.2em 0.8em;
 	background: transparent;
+	box-shadow: none;
 	cursor: pointer;
 }
 
-.skillflow-provider-picker__chip--on {
+.skillflow-provider-picker__chips .skillflow-provider-picker__chip--on {
 	background: var(--interactive-accent);
 	color: var(--text-on-accent);
 	border-color: var(--interactive-accent);
@@ -271,7 +279,10 @@
 	gap: 0.6em;
 }
 
-.skillflow-provider-picker__tile {
+/* Scoped under .skillflow-provider-picker__grid so this outranks
+   Obsidian's `button:not(.clickable-icon)` background/box-shadow — see the
+   comment on .skillflow-nav above. */
+.skillflow-provider-picker__grid .skillflow-provider-picker__tile {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -282,11 +293,12 @@
 	border: 1px solid var(--background-modifier-border);
 	border-radius: 8px;
 	background: var(--background-secondary);
+	box-shadow: none;
 	cursor: pointer;
 	white-space: normal;
 }
 
-.skillflow-provider-picker__tile:hover {
+.skillflow-provider-picker__grid .skillflow-provider-picker__tile:hover {
 	border-color: var(--interactive-accent);
 }
 
