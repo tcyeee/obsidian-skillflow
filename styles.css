@@ -1,0 +1,157 @@
+/* Model providers settings */
+
+.skillflow-settings-section {
+	margin-bottom: 1.5em;
+}
+
+.skillflow-settings-header {
+	font-size: 1.1em;
+	font-weight: 600;
+	margin-bottom: 0.25em;
+}
+
+.skillflow-settings-desc {
+	color: var(--text-muted);
+	margin-bottom: 1em;
+}
+
+.skillflow-settings-table-container {
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	overflow: hidden;
+}
+
+.skillflow-settings-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.skillflow-settings-table th,
+.skillflow-settings-table td {
+	text-align: left;
+	padding: 0.5em 0.75em;
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.skillflow-settings-table th {
+	color: var(--text-muted);
+	font-weight: 500;
+}
+
+.skillflow-settings-table tr:last-child td {
+	border-bottom: none;
+}
+
+.skillflow-settings-empty {
+	color: var(--text-muted);
+	text-align: center;
+}
+
+.skillflow-settings-actions {
+	display: flex;
+	gap: 0.5em;
+}
+
+.skillflow-settings-danger {
+	color: var(--text-error);
+}
+
+.skillflow-settings-add-provider {
+	width: 100%;
+	border-radius: 0;
+}
+
+.skillflow-settings-required::after {
+	content: " *";
+	color: var(--text-error);
+}
+
+/* Provider picker modal */
+
+.skillflow-provider-picker__search {
+	width: 100%;
+	margin-bottom: 0.75em;
+}
+
+.skillflow-provider-picker__chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4em;
+	margin-bottom: 1em;
+}
+
+.skillflow-provider-picker__chip {
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 999px;
+	padding: 0.2em 0.8em;
+	background: transparent;
+	cursor: pointer;
+}
+
+.skillflow-provider-picker__chip--on {
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border-color: var(--interactive-accent);
+}
+
+.skillflow-provider-picker__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+	gap: 0.6em;
+}
+
+.skillflow-provider-picker__tile {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.4em;
+	padding: 0.9em 0.5em;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	background: var(--background-secondary);
+	cursor: pointer;
+}
+
+.skillflow-provider-picker__tile:hover {
+	border-color: var(--interactive-accent);
+}
+
+.skillflow-provider-picker__tile-icon {
+	width: 36px;
+	height: 36px;
+	border-radius: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 600;
+	font-size: 0.85em;
+	background: var(--background-modifier-border);
+}
+
+.skillflow-provider-picker__tile-icon[data-tint="green"] { background: #2ea04333; }
+.skillflow-provider-picker__tile-icon[data-tint="amber"] { background: #d9770633; }
+.skillflow-provider-picker__tile-icon[data-tint="blue"] { background: #2563eb33; }
+.skillflow-provider-picker__tile-icon[data-tint="purple"] { background: #7c3aed33; }
+.skillflow-provider-picker__tile-icon[data-tint="slate"] { background: #64748b33; }
+
+.skillflow-provider-picker__tile--custom .skillflow-provider-picker__tile-icon {
+	font-size: 1.2em;
+}
+
+.skillflow-provider-picker__tile-name {
+	font-weight: 500;
+	text-align: center;
+}
+
+.skillflow-provider-picker__tile-sub {
+	font-size: 0.8em;
+	color: var(--text-muted);
+	text-align: center;
+}
+
+/* Provider add/edit form */
+
+.skillflow-provider-form__hint {
+	margin: -0.5em 0 0.75em;
+	font-size: 0.85em;
+}
