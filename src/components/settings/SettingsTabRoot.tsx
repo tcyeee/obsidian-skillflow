@@ -18,8 +18,16 @@ import { SkillsSection } from "./SkillsSection";
 // The active sub-tab lives in local state rather than `plugin.settings`:
 // it's view state, not data worth persisting to disk, and it's expected to
 // reset to "Add model" each time the panel is reopened.
-export function SettingsTabRoot({ app, plugin }: { app: App; plugin: SkillFlowPlugin }) {
-	const [activeTab, setActiveTab] = useState<SettingsTabId>("providers");
+export function SettingsTabRoot({
+	app,
+	plugin,
+	initialTab,
+}: {
+	app: App;
+	plugin: SkillFlowPlugin;
+	initialTab?: SettingsTabId;
+}) {
+	const [activeTab, setActiveTab] = useState<SettingsTabId>(initialTab ?? "providers");
 
 	return (
 		<SettingsProvider settings={plugin.settings} setSettings={(next) => plugin.setSettings(next)}>
