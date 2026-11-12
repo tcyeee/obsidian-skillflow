@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { PERMISSION_LEVEL_INFO, computePermissionLevel } from "../../constants/skill-tools";
 import { useSettings } from "../../contexts/settings-context";
+import { BUILTIN_SKILLS } from "../../core/skills/builtins";
 import { deleteSkill, duplicateSkill, listSkills } from "../../core/skills/registry";
 import type SkillFlowPlugin from "../../main";
 import { Skill } from "../../types/skill.types";
@@ -115,16 +116,36 @@ export function SkillsSection({ app, plugin, onRequestProvidersTab }: SkillsSect
 
 			{skills === null ? (
 				<div className="skillflow-skills__empty">加载中…</div>
-			) : skills.length === 0 ? (
-				<div className="skillflow-skills__empty">
-					<ObsidianIcon icon="sparkles" className="skillflow-skills__empty-icon" />
-					<div className="skillflow-skills__empty-title">还没有 Skill</div>
-					<div className="skillflow-skills__empty-desc">
-						点击"新建 Skill"，用一句话描述你想要的自动化操作。
-					</div>
-				</div>
 			) : (
 				<ul className="skillflow-skill-list">
+					{BUILTIN_SKILLS.map((builtin) => (
+						<li key={builtin.id} className="skillflow-skill-row skillflow-skill-row--locked">
+							<ObsidianIcon icon="lock" className="skillflow-skill-row__lock" />
+							<div className="skillflow-skill-row__icon">
+								<ObsidianIcon icon={builtin.icon} className="skillflow-skill-row__icon-svg" />
+							</div>
+							<div className="skillflow-skill-row__main">
+								<div className="skillflow-skill-row__name">{builtin.name}</div>
+								<div className="skillflow-skill-row__desc">{builtin.description}</div>
+							</div>
+							<div
+								className="skillflow-permission-badge"
+								data-level="L0"
+								title={PERMISSION_LEVEL_INFO.L0.desc}
+							>
+								{PERMISSION_LEVEL_INFO.L0.label}
+							</div>
+						</li>
+					))}
+					{skills.length === 0 && (
+						<li className="skillflow-skill-row skillflow-skill-row--empty">
+							<div className="skillflow-skill-row__main">
+								<div className="skillflow-skill-row__desc">
+									还没有自定义 Skill，点击"新建 Skill"，用一句话描述你想要的自动化操作。
+								</div>
+							</div>
+						</li>
+					)}
 					{skills.map((skill) => {
 						const level = computePermissionLevel(skill.tools);
 						return (

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { OUTPUT_MODE_LABELS, PERMISSION_LEVEL_INFO, TOOL_INFO, computePermissionLevel } from "../../constants/skill-tools";
 import { ChatMessage } from "../../core/llm/base";
 import { parseSkillFile, serializeSkill } from "../../core/skills/skillFile";
-import { TemplateVars } from "../../core/skills/template";
+import { buildTemplateVars } from "../../core/skills/template";
 import { runDryRun, runWizardTurn } from "../../core/skills/wizard";
 import { saveNewSkill, skillIdExists } from "../../core/skills/registry";
 import type SkillFlowPlugin from "../../main";
@@ -39,20 +39,6 @@ export class CreateSkillModal extends ReactModal<CreateSkillProps> {
 }
 
 type DisplayMessage = { role: "user" | "assistant"; text: string };
-
-function buildTemplateVars(view: MarkdownView): TemplateVars {
-	const file = view.file;
-	const frontmatter = file ? view.app.metadataCache.getFileCache(file)?.frontmatter ?? {} : {};
-	return {
-		note: view.editor.getValue(),
-		selection: view.editor.getSelection(),
-		title: file?.basename ?? "",
-		path: file?.path ?? "",
-		date: new Date().toISOString().slice(0, 10),
-		lang: "zh",
-		frontmatter,
-	};
-}
 
 function DraftCard({ draft }: { draft: SkillDraft }) {
 	const level = computePermissionLevel(draft.tools);

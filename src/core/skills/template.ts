@@ -1,3 +1,5 @@
+import { MarkdownView } from "obsidian";
+
 // Template variables from TODO.md §9.4, used both to render a human-readable
 // preview of what a dry run will send and to actually substitute them before
 // calling the model.
@@ -10,6 +12,21 @@ export type TemplateVars = {
 	lang: string;
 	frontmatter: Record<string, unknown>;
 };
+
+/** Builds TemplateVars from the active editor — shared by dry-run preview and real execution. */
+export function buildTemplateVars(view: MarkdownView): TemplateVars {
+	const file = view.file;
+	const frontmatter = file ? view.app.metadataCache.getFileCache(file)?.frontmatter ?? {} : {};
+	return {
+		note: view.editor.getValue(),
+		selection: view.editor.getSelection(),
+		title: file?.basename ?? "",
+		path: file?.path ?? "",
+		date: new Date().toISOString().slice(0, 10),
+		lang: "zh",
+		frontmatter,
+	};
+}
 
 export function renderTemplate(instructions: string, vars: TemplateVars): string {
 	const target = vars.selection || vars.note;
