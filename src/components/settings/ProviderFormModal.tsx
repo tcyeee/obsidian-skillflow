@@ -21,6 +21,7 @@ type ProviderFormProps = {
 	plugin: SkillFlowPlugin;
 	provider: LLMProvider | null; // null when adding
 	initialPresetType?: LLMProviderPresetType;
+	onSaved?: () => void;
 };
 
 const PRESET_OPTIONS = Object.fromEntries(
@@ -42,13 +43,34 @@ function suggestProviderId(plugin: SkillFlowPlugin, presetType: LLMProviderPrese
 // API key / base URL / default model — no custom headers, transport-mode,
 // or prompt-caching toggles.
 export class AddProviderModal extends ReactModal<ProviderFormProps> {
-	constructor(app: App, plugin: SkillFlowPlugin, initialPresetType?: LLMProviderPresetType) {
+	private saved = false;
+	private readonly onDismiss?: () => void;
+
+	constructor(
+		app: App,
+		plugin: SkillFlowPlugin,
+		initialPresetType?: LLMProviderPresetType,
+		onDismiss?: () => void,
+	) {
 		super({
 			app,
 			Component: ProviderFormComponent,
-			props: { plugin, provider: null, initialPresetType },
+			props: {
+				plugin,
+				provider: null,
+				initialPresetType,
+				onSaved: () => {
+					this.saved = true;
+				},
+			},
 			title: "Add provider",
 		});
+		this.onDismiss = onDismiss;
+	}
+
+	onClose() {
+		super.onClose();
+		if (!this.saved) this.onDismiss?.();
 	}
 }
 
@@ -67,6 +89,7 @@ function ProviderFormComponent({
 	plugin,
 	provider,
 	initialPresetType,
+	onSaved,
 	onClose,
 }: ProviderFormProps & { onClose: () => void }) {
 	const [formData, setFormData] = useState<LLMProvider>(
@@ -106,6 +129,7 @@ function ProviderFormComponent({
 				? plugin.settings.providers.map((p) => (p.id === provider.id ? validated : p))
 				: [...plugin.settings.providers, validated];
 			await plugin.setSettings({ ...plugin.settings, providers });
+			onSaved?.();
 			onClose();
 		})();
 	};
