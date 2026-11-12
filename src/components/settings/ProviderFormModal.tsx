@@ -183,17 +183,18 @@ function ProviderFormComponent({
 				</div>
 			)}
 
-			<ObsidianSetting
-				name="Base URL"
-				desc={`Request URL preview: ${primaryRequestUrlPreview ?? "—"}`}
-				required={presetInfo.requireBaseUrl}
-			>
+			<ObsidianSetting name="Base URL" required={presetInfo.requireBaseUrl}>
 				<ObsidianTextInput
 					value={formData.baseUrl ?? ""}
 					placeholder={getDefaultBaseUrlForPreset(formData.presetType) ?? "https://..."}
 					onChange={(value) => setFormData((prev) => ({ ...prev, baseUrl: value }))}
 				/>
 			</ObsidianSetting>
+			{primaryRequestUrlPreview && (
+				<div className="skillflow-provider-form__hint skillflow-provider-form__url-preview">
+					Requests go to <code>{primaryRequestUrlPreview}</code>
+				</div>
+			)}
 
 			<ObsidianSetting name="Default model" desc="The model ID Skills will use when calling this provider.">
 				<ObsidianTextInput

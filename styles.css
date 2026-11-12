@@ -1,64 +1,235 @@
+/* Settings tab navigation */
+
+.skillflow-nav {
+	display: flex;
+	gap: 0.25em;
+	margin-bottom: 1.5em;
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.skillflow-nav__tab {
+	display: flex;
+	align-items: center;
+	gap: 0.45em;
+	padding: 0.6em 0.2em;
+	margin-right: 1.2em;
+	background: transparent;
+	border: none;
+	border-bottom: 2px solid transparent;
+	border-radius: 0;
+	color: var(--text-muted);
+	cursor: pointer;
+	box-shadow: none;
+}
+
+.skillflow-nav__tab:hover {
+	color: var(--text-normal);
+	background: transparent;
+	box-shadow: none;
+}
+
+.skillflow-nav__tab[data-active="true"] {
+	color: var(--text-normal);
+	border-bottom-color: var(--interactive-accent);
+	font-weight: 500;
+}
+
+.skillflow-nav__tab-icon {
+	width: 1em;
+	height: 1em;
+	display: flex;
+}
+
+/* Empty settings page placeholder */
+
+.skillflow-placeholder {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.6em;
+	padding: 3em 1.5em;
+	text-align: center;
+}
+
+.skillflow-placeholder__icon {
+	color: var(--text-faint);
+	width: 2em;
+	height: 2em;
+}
+
+.skillflow-placeholder__title {
+	font-weight: 600;
+}
+
+.skillflow-placeholder__desc {
+	color: var(--text-muted);
+	max-width: 32em;
+}
+
 /* Model providers settings */
 
-.skillflow-settings-section {
+.skillflow-providers {
 	margin-bottom: 1.5em;
 }
 
-.skillflow-settings-header {
+.skillflow-providers__header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1em;
+	margin-bottom: 1em;
+}
+
+.skillflow-providers__title {
 	font-size: 1.1em;
 	font-weight: 600;
 	margin-bottom: 0.25em;
 }
 
-.skillflow-settings-desc {
+.skillflow-providers__desc {
 	color: var(--text-muted);
-	margin-bottom: 1em;
 }
 
-.skillflow-settings-table-container {
+.skillflow-providers__add {
+	display: flex;
+	align-items: center;
+	gap: 0.4em;
+	flex-shrink: 0;
+}
+
+.skillflow-providers__add .svg-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.skillflow-providers__empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.6em;
+	padding: 2.5em 1.5em;
 	border: 1px solid var(--background-modifier-border);
-	border-radius: 6px;
-	overflow: hidden;
-}
-
-.skillflow-settings-table {
-	width: 100%;
-	border-collapse: collapse;
-}
-
-.skillflow-settings-table th,
-.skillflow-settings-table td {
-	text-align: left;
-	padding: 0.5em 0.75em;
-	border-bottom: 1px solid var(--background-modifier-border);
-}
-
-.skillflow-settings-table th {
-	color: var(--text-muted);
-	font-weight: 500;
-}
-
-.skillflow-settings-table tr:last-child td {
-	border-bottom: none;
-}
-
-.skillflow-settings-empty {
-	color: var(--text-muted);
+	border-radius: 8px;
+	background: var(--background-secondary);
 	text-align: center;
 }
 
-.skillflow-settings-actions {
+.skillflow-providers__empty-icon {
+	color: var(--text-faint);
+	width: 2em;
+	height: 2em;
+}
+
+.skillflow-providers__empty-title {
+	font-weight: 600;
+}
+
+.skillflow-providers__empty-desc {
+	color: var(--text-muted);
+	max-width: 32em;
+	margin-bottom: 0.4em;
+}
+
+.skillflow-provider-list {
 	display: flex;
-	gap: 0.5em;
+	flex-direction: column;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	overflow: hidden;
 }
 
-.skillflow-settings-danger {
-	color: var(--text-error);
+.skillflow-provider-row {
+	display: flex;
+	align-items: center;
+	gap: 0.75em;
+	padding: 0.65em 0.9em;
+	border-bottom: 1px solid var(--background-modifier-border);
+	cursor: pointer;
 }
 
-.skillflow-settings-add-provider {
-	width: 100%;
-	border-radius: 0;
+.skillflow-provider-row:last-child {
+	border-bottom: none;
+}
+
+.skillflow-provider-row:hover {
+	background: var(--background-modifier-hover);
+}
+
+.skillflow-provider-row__icon {
+	flex-shrink: 0;
+	width: 32px;
+	height: 32px;
+	border-radius: 7px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 600;
+	font-size: 0.8em;
+	background: var(--background-modifier-border);
+}
+
+.skillflow-provider-row__icon[data-tint="green"] { background: #2ea04333; }
+.skillflow-provider-row__icon[data-tint="amber"] { background: #d9770633; }
+.skillflow-provider-row__icon[data-tint="blue"] { background: #2563eb33; }
+.skillflow-provider-row__icon[data-tint="purple"] { background: #7c3aed33; }
+.skillflow-provider-row__icon[data-tint="slate"] { background: #64748b33; }
+.skillflow-provider-row__icon[data-tint="neutral"] { background: var(--background-modifier-border); }
+
+.skillflow-provider-row__icon-svg {
+	width: 18px;
+	height: 18px;
+	color: var(--text-normal);
+}
+
+.skillflow-provider-row__main {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.skillflow-provider-row__id {
+	font-weight: 500;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.skillflow-provider-row__model {
+	color: var(--text-muted);
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.skillflow-provider-row__status {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	gap: 0.4em;
+	font-size: 0.85em;
+	color: var(--text-muted);
+}
+
+.skillflow-provider-row__dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--text-faint);
+}
+
+.skillflow-provider-row__status[data-state="ok"] .skillflow-provider-row__dot {
+	background: var(--text-success);
+}
+
+.skillflow-provider-row__status[data-state="warn"] .skillflow-provider-row__dot {
+	background: var(--text-warning);
+}
+
+.skillflow-provider-row__menu {
+	flex-shrink: 0;
 }
 
 .skillflow-settings-required::after {
@@ -137,6 +308,12 @@
 .skillflow-provider-picker__tile-icon[data-tint="purple"] { background: #7c3aed33; }
 .skillflow-provider-picker__tile-icon[data-tint="slate"] { background: #64748b33; }
 
+.skillflow-provider-picker__tile-icon-svg {
+	width: 20px;
+	height: 20px;
+	color: var(--text-normal);
+}
+
 .skillflow-provider-picker__tile--custom .skillflow-provider-picker__tile-icon {
 	font-size: 1.2em;
 }
@@ -157,4 +334,13 @@
 .skillflow-provider-form__hint {
 	margin: -0.5em 0 0.75em;
 	font-size: 0.85em;
+}
+
+.skillflow-provider-form__url-preview {
+	color: var(--text-muted);
+	margin-top: -0.75em;
+}
+
+.skillflow-provider-form__url-preview code {
+	font-size: 0.9em;
 }

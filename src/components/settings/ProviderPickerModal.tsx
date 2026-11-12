@@ -11,6 +11,7 @@ import {
 import { PROVIDER_PRESET_INFO } from "../../constants/provider-presets";
 import type SkillFlowPlugin from "../../main";
 import { LLMProviderPresetType } from "../../types/provider.types";
+import { ProviderIcon } from "../common/ProviderIcon";
 
 import { AddProviderModal } from "./ProviderFormModal";
 
@@ -105,7 +106,11 @@ function ProviderPickerComponent({
 								className="skillflow-provider-picker__tile-icon"
 								data-tint={catalog.tint}
 							>
-								{catalog.monogram}
+								<ProviderIcon
+									icon={catalog.icon}
+									monogram={catalog.monogram}
+									className="skillflow-provider-picker__tile-icon-svg"
+								/>
 							</div>
 							<div className="skillflow-provider-picker__tile-name">{info.label}</div>
 						</button>
