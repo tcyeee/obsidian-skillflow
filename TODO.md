@@ -6,11 +6,11 @@ tags:
 created: 2026-11-12 13:57
 ---
 
-# SkillsFlow 产品开发文档
+# SkillFlow 产品开发文档
 
 | 项目 | 内容 |
 | --- | --- |
-| 产品名 | SkillsFlow |
+| 产品名 | SkillFlow |
 | 形态 | Obsidian 社区插件（先桌面端，后移动端） |
 | 文档版本 | v0.1 草案 |
 | 最后整理 | 2026-11-12 |
@@ -20,11 +20,11 @@ created: 2026-11-12 13:57
 
 ### 1.1 一句话定位
 
-SkillsFlow 把 AI Skills 从聊天窗口里拿出来，变成 Obsidian 菜单中可一键点击的原生工作流。每个 Skill 默认作用于当前笔记。
+SkillFlow 把 AI Skills 从聊天窗口里拿出来，变成 Obsidian 菜单中可一键点击的原生工作流。每个 Skill 默认作用于当前笔记。
 
 ### 1.2 核心想法
 
-1. 在 Obsidian 中新增一个名为 SkillsFlow 的菜单，菜单里的每一项就是一个 Skill。
+1. 在 Obsidian 中新增一个名为 SkillFlow 的菜单，菜单里的每一项就是一个 Skill。
 2. 用户可以用自然语言让 AI 创建 Skill，也可以搜索并下载别人分享的 Skill。
 3. 所有已安装的 Skill 以菜单项形式展示，点击即执行，无需打开聊天窗口，无需重新描述需求。
 4. Skill 默认操作当前笔记（有选中文字时操作选中内容）。
@@ -130,9 +130,9 @@ flowchart LR
 | --- | --- | --- | --- |
 | F-101 | 扫描并加载本地 Skills 目录 | P0 | 启动后 1 秒内加载 50 个 Skill 以内；文件新增、修改、删除后自动热更新 |
 | F-102 | Skill 文件解析与校验 | P0 | 解析 Frontmatter 和正文段落；格式错误的 Skill 在列表中标红并给出原因，不影响其他 Skill |
-| F-103 | SkillsFlow 菜单入口 | P0 | 提供 Ribbon 图标，点击弹出 Skill 菜单（见第 8 节） |
-| F-104 | 每个 Skill 自动注册为命令 | P0 | 命令面板可搜索到 `SkillsFlow: <Skill 名>`，可绑定快捷键 |
-| F-105 | 编辑器右键菜单入口 | P1 | 右键菜单出现 SkillsFlow 子菜单，仅显示已固定的 Skill |
+| F-103 | SkillFlow 菜单入口 | P0 | 提供 Ribbon 图标，点击弹出 Skill 菜单（见第 8 节） |
+| F-104 | 每个 Skill 自动注册为命令 | P0 | 命令面板可搜索到 `SkillFlow: <Skill 名>`，可绑定快捷键 |
+| F-105 | 编辑器右键菜单入口 | P1 | 右键菜单出现 SkillFlow 子菜单，仅显示已固定的 Skill |
 | F-106 | 当前笔记上下文构建 | P0 | 能取到笔记全文、文件名、路径、Frontmatter、选区、光标位置 |
 | F-107 | 选区优先规则 | P0 | 有选区时 `{{selection}}` 有值且 Skill 默认只处理选区；无选区则处理全文 |
 | F-108 | LLM 调用 | P0 | 支持 OpenAI 兼容接口和 Anthropic 接口；流式输出；可取消 |
@@ -188,7 +188,7 @@ Obsidian 插件 API 无法改造原生顶部菜单，因此"菜单栏"通过以�
 
 ```mermaid
 flowchart TD
-    A[SkillsFlow 菜单] --> B[当前笔记: My_Project.md]
+    A[SkillFlow 菜单] --> B[当前笔记: My_Project.md]
     A --> C[固定的 Skills]
     C --> C1[翻译当前笔记]
     C --> C2[提取核心知识点]
@@ -274,10 +274,10 @@ sequenceDiagram
 
 | 类型 | 路径 | 说明 |
 | --- | --- | --- |
-| 用户 Skill | `<Vault>/.skillsflow/skills/<id>/SKILL.md` | 随 Vault 同步 |
+| 用户 Skill | `<Vault>/.skillflow/skills/<id>/SKILL.md` | 随 Vault 同步 |
 | 内置 Skill | 插件目录内置 | 只读，可复制为用户 Skill 后修改 |
-| 市场 Skill | `<Vault>/.skillsflow/skills/<id>/SKILL.md` | 安装后与用户 Skill 同目录，元数据记录来源 |
-| 授权记录 | `<Vault>/.skillsflow/permissions.json` | 每个 Skill 已授权的权限 |
+| 市场 Skill | `<Vault>/.skillflow/skills/<id>/SKILL.md` | 安装后与用户 Skill 同目录，元数据记录来源 |
+| 授权记录 | `<Vault>/.skillflow/permissions.json` | 每个 Skill 已授权的权限 |
 | 插件设置 | 插件 `data.json` | 模型配置、固定列表等 |
 
 每个 Skill 一个目录，便于以后附带资源文件（示例、模板）。
@@ -521,7 +521,7 @@ interface PermissionManager {
 ### 10.6 建议代码目录
 
 ```text
-skillsflow/
+skillflow/
   manifest.json
   package.json
   esbuild.config.mjs
@@ -642,7 +642,7 @@ skillsflow/
 | 模型 | Provider（OpenAI 兼容 / Anthropic） | OpenAI 兼容 |
 | 模型 | Base URL、API Key、模型名 | 空 |
 | 模型 | 温度、最大输出长度 | 0.3、4096 |
-| Skills | Skills 目录 | `.skillsflow/skills` |
+| Skills | Skills 目录 | `.skillflow/skills` |
 | Skills | 菜单最多显示数量 | 8 |
 | 行为 | 修改类输出确认方式 | diff |
 | 行为 | 默认输出语言 | 跟随 Obsidian 语言 |
@@ -653,7 +653,7 @@ skillsflow/
 
 ```mermaid
 gantt
-    title SkillsFlow 开发计划
+    title SkillFlow 开发计划
     dateFormat YYYY-MM-DD
     axisFormat %m-%d
     section V0.1
@@ -766,19 +766,19 @@ V0.1 到 V0.3 期间，代码结构上把 Runtime Core 和 Obsidian 适配层分
 
 | 编号 | 问题 | 倾向 | 需要什么信息 |
 | --- | --- | --- | --- |
-| Q1 | Skill 目录放 `.skillsflow/` 还是普通可见文件夹 | 可见文件夹，便于用户在 Obsidian 内编辑和同步 | 验证隐藏目录在 Obsidian 中的编辑体验和 iCloud 同步表现 |
+| Q1 | Skill 目录放 `.skillflow/` 还是普通可见文件夹 | 可见文件夹，便于用户在 Obsidian 内编辑和同步 | 验证隐藏目录在 Obsidian 中的编辑体验和 iCloud 同步表现 |
 | Q2 | Skill 格式是否兼容 Anthropic 的 `SKILL.md` 规范 | 尽量兼容，扩展字段放在 Frontmatter | 对照最新规范确认字段冲突 |
 | Q3 | V0.1 是否支持多个模型服务并存 | 先支持一个全局配置，Skill 可用 `model` 字段覆盖名称 | 用户是否需要多服务切换 |
 | Q4 | 是否提供托管模型 | V0.3 之后再定 | 成本测算与付费意愿 |
 | Q5 | 市场后端自建还是基于 GitHub 仓库索引 | 先用 GitHub 仓库索引，零运维 | 审核和统计能力是否够用 |
 | Q6 | 是否开放移动端 | V0.2 评估 | 移动端流式请求和 CORS 表现 |
-| Q7 | 产品名 SkillsFlow 是否可用 | 待查 | 检索 Obsidian 插件库与商标 |
+| Q7 | 产品名 SkillFlow 是否可用 | 待查 | 检索 Obsidian 插件库与商标 |
 
 ## 19. 原始构想备忘
 
 保留最初的想法，防止整理过程中丢失意图：
 
-- 菜单名叫 SkillsFlow。
+- 菜单名叫 SkillFlow。
 - 用户可以通过 AI 创建 Skill，也可以搜索下载他人的 Skill。
 - 所有 Skill 以菜单形式存在，逐项显示在菜单栏，点击即触发。
 - 所有 Skill 默认针对当前笔记操作。
