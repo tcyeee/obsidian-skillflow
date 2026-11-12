@@ -16,7 +16,7 @@ export const toolNameSchema = z.enum([
 ]);
 export type ToolName = z.infer<typeof toolNameSchema>;
 
-export const permissionLevelSchema = z.enum(["L0", "L1", "L2"]);
+export const permissionLevelSchema = z.enum(["L0", "L1", "L2", "L3"]);
 export type PermissionLevel = z.infer<typeof permissionLevelSchema>;
 
 export const outputModeSchema = z.enum([
@@ -25,6 +25,7 @@ export const outputModeSchema = z.enum([
 	"append",
 	"new_note",
 	"modal",
+	"github_pr",
 ]);
 export type OutputMode = z.infer<typeof outputModeSchema>;
 
