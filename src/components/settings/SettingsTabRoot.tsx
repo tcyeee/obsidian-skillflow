@@ -7,6 +7,7 @@ import type SkillFlowPlugin from "../../main";
 import { ProvidersSection } from "./ProvidersSection";
 import { SettingsNav, SettingsTabId } from "./SettingsNav";
 import { SettingsPlaceholder } from "./SettingsPlaceholder";
+import { SkillsSection } from "./SkillsSection";
 
 // Renders from `plugin.settings` directly rather than local React state:
 // `plugin.setSettings` persists to disk and re-triggers the settings tab's
@@ -25,11 +26,7 @@ export function SettingsTabRoot({ app, plugin }: { app: App; plugin: SkillFlowPl
 			<SettingsNav active={activeTab} onChange={setActiveTab} />
 			{activeTab === "providers" && <ProvidersSection app={app} plugin={plugin} />}
 			{activeTab === "skills" && (
-				<SettingsPlaceholder
-					icon="sparkles"
-					title="Manage skills"
-					description="Skill management is coming soon. For now, skills run on whatever providers you've added."
-				/>
+				<SkillsSection app={app} plugin={plugin} onRequestProvidersTab={() => setActiveTab("providers")} />
 			)}
 			{activeTab === "other" && (
 				<SettingsPlaceholder

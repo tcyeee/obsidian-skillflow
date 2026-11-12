@@ -60,3 +60,23 @@ export function resolveProviderPrimaryRequestUrl(
 		}
 	}
 }
+
+/**
+ * URL used to list available models for the "Default model" picker. Ollama
+ * also serves its local models under this OpenAI-compatible shape, so it
+ * reuses the same branch as other openai-compatible presets.
+ */
+export function resolveProviderModelsListUrl(
+	provider: Pick<LLMProvider, "presetType" | "apiType" | "baseUrl">,
+): string | undefined {
+	switch (provider.apiType) {
+		case "openai-compatible": {
+			const baseUrl = resolveOpenAICompatibleRequestBaseUrl(provider);
+			return baseUrl ? joinEndpoint(baseUrl, "models") : undefined;
+		}
+		case "anthropic": {
+			const baseUrl = resolveProviderBaseUrl(provider) ?? "https://api.anthropic.com";
+			return joinEndpoint(baseUrl, "v1/models");
+		}
+	}
+}

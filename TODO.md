@@ -274,10 +274,10 @@ sequenceDiagram
 
 | 类型 | 路径 | 说明 |
 | --- | --- | --- |
-| 用户 Skill | `<Vault>/.skillflow/skills/<id>/SKILL.md` | 随 Vault 同步 |
+| 用户 Skill | `<Vault>/SkillFlow/skills/<id>/SKILL.md` | 随 Vault 同步 |
 | 内置 Skill | 插件目录内置 | 只读，可复制为用户 Skill 后修改 |
-| 市场 Skill | `<Vault>/.skillflow/skills/<id>/SKILL.md` | 安装后与用户 Skill 同目录，元数据记录来源 |
-| 授权记录 | `<Vault>/.skillflow/permissions.json` | 每个 Skill 已授权的权限 |
+| 市场 Skill | `<Vault>/SkillFlow/skills/<id>/SKILL.md` | 安装后与用户 Skill 同目录，元数据记录来源 |
+| 授权记录 | `<Vault>/SkillFlow/permissions.json` | 每个 Skill 已授权的权限 |
 | 插件设置 | 插件 `data.json` | 模型配置、固定列表等 |
 
 每个 Skill 一个目录，便于以后附带资源文件（示例、模板）。
@@ -642,7 +642,7 @@ skillflow/
 | 模型 | Provider（OpenAI 兼容 / Anthropic） | OpenAI 兼容 |
 | 模型 | Base URL、API Key、模型名 | 空 |
 | 模型 | 温度、最大输出长度 | 0.3、4096 |
-| Skills | Skills 目录 | `.skillflow/skills` |
+| Skills | Skills 目录 | `SkillFlow/skills` |
 | Skills | 菜单最多显示数量 | 8 |
 | 行为 | 修改类输出确认方式 | diff |
 | 行为 | 默认输出语言 | 跟随 Obsidian 语言 |
@@ -766,7 +766,7 @@ V0.1 到 V0.3 期间，代码结构上把 Runtime Core 和 Obsidian 适配层分
 
 | 编号 | 问题 | 倾向 | 需要什么信息 |
 | --- | --- | --- | --- |
-| Q1 | Skill 目录放 `.skillflow/` 还是普通可见文件夹 | 可见文件夹，便于用户在 Obsidian 内编辑和同步 | 验证隐藏目录在 Obsidian 中的编辑体验和 iCloud 同步表现 |
+| Q1 | ~~Skill 目录放 `.skillflow/` 还是普通可见文件夹~~ | 已定案：`SkillFlow/skills`（可见文件夹）。隐藏的点号目录会被 Obsidian Vault API（`getAbstractFileByPath`、`TFolder.children`、`vault.create`）整体忽略不索引，导致新建的 Skill 列表刷新不出来、也打不开编辑 | — |
 | Q2 | Skill 格式是否兼容 Anthropic 的 `SKILL.md` 规范 | 尽量兼容，扩展字段放在 Frontmatter | 对照最新规范确认字段冲突 |
 | Q3 | V0.1 是否支持多个模型服务并存 | 先支持一个全局配置，Skill 可用 `model` 字段覆盖名称 | 用户是否需要多服务切换 |
 | Q4 | 是否提供托管模型 | V0.3 之后再定 | 成本测算与付费意愿 |

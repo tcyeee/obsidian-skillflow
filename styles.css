@@ -329,6 +329,401 @@
 	text-align: center;
 }
 
+/* Skills management */
+
+.skillflow-skills {
+	margin-bottom: 1.5em;
+}
+
+.skillflow-skills__header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1em;
+	margin-bottom: 1em;
+}
+
+.skillflow-skills__title {
+	font-size: 1.1em;
+	font-weight: 600;
+	margin-bottom: 0.25em;
+}
+
+.skillflow-skills__desc {
+	color: var(--text-muted);
+}
+
+.skillflow-skills__add {
+	display: flex;
+	align-items: center;
+	gap: 0.4em;
+	flex-shrink: 0;
+}
+
+.skillflow-skills__add .svg-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.skillflow-skills__nudge {
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
+	padding: 0.75em 1em;
+	margin-bottom: 1em;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	background: var(--background-secondary);
+	color: var(--text-muted);
+}
+
+.skillflow-skills__nudge-action {
+	margin-left: auto;
+	flex-shrink: 0;
+}
+
+.skillflow-skills__empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.6em;
+	padding: 2.5em 1.5em;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	background: var(--background-secondary);
+	text-align: center;
+	color: var(--text-muted);
+}
+
+.skillflow-skills__empty-icon {
+	color: var(--text-faint);
+	width: 2em;
+	height: 2em;
+}
+
+.skillflow-skills__empty-title {
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+.skillflow-skills__empty-desc {
+	max-width: 32em;
+}
+
+.skillflow-skill-list {
+	display: flex;
+	flex-direction: column;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.skillflow-skill-row {
+	display: flex;
+	align-items: center;
+	gap: 0.75em;
+	padding: 0.65em 0.9em;
+	border-bottom: 1px solid var(--background-modifier-border);
+	cursor: pointer;
+}
+
+.skillflow-skill-row:last-child {
+	border-bottom: none;
+}
+
+.skillflow-skill-row:hover {
+	background: var(--background-modifier-hover);
+}
+
+.skillflow-skill-row__icon {
+	flex-shrink: 0;
+	width: 32px;
+	height: 32px;
+	border-radius: 7px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--background-modifier-border);
+}
+
+.skillflow-skill-row__icon-svg {
+	width: 16px;
+	height: 16px;
+	color: var(--text-normal);
+}
+
+.skillflow-skill-row__main {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.skillflow-skill-row__name {
+	font-weight: 500;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.skillflow-skill-row__desc {
+	color: var(--text-muted);
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.skillflow-skill-row__menu {
+	flex-shrink: 0;
+}
+
+/* Permission level badge, shared by the skill list and the draft card */
+
+.skillflow-permission-badge {
+	flex-shrink: 0;
+	font-size: 0.8em;
+	font-weight: 500;
+	padding: 0.2em 0.6em;
+	border-radius: 999px;
+	white-space: nowrap;
+	background: var(--background-modifier-border);
+	color: var(--text-muted);
+}
+
+.skillflow-permission-badge[data-level="L0"] {
+	background: var(--background-modifier-border);
+	color: var(--text-muted);
+}
+
+.skillflow-permission-badge[data-level="L1"] {
+	background: #d9770633;
+	color: var(--text-warning);
+}
+
+.skillflow-permission-badge[data-level="L2"] {
+	background: #e0314933;
+	color: var(--text-error);
+}
+
+/* Create-skill wizard modal */
+
+.skillflow-wizard {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75em;
+	min-width: 32em;
+}
+
+.skillflow-wizard__empty {
+	color: var(--text-muted);
+	padding: 1em 0;
+}
+
+.skillflow-wizard__thread {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5em;
+	max-height: 14em;
+	overflow-y: auto;
+}
+
+.skillflow-wizard__hint {
+	color: var(--text-muted);
+	font-size: 0.9em;
+}
+
+.skillflow-wizard__message {
+	padding: 0.5em 0.75em;
+	border-radius: 8px;
+	max-width: 85%;
+	white-space: pre-wrap;
+}
+
+.skillflow-wizard__message[data-role="user"] {
+	align-self: flex-end;
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+}
+
+.skillflow-wizard__message[data-role="assistant"] {
+	align-self: flex-start;
+	background: var(--background-secondary);
+}
+
+.skillflow-wizard__message--pending {
+	color: var(--text-muted);
+	font-style: italic;
+}
+
+.skillflow-wizard__error {
+	display: flex;
+	align-items: center;
+	gap: 0.6em;
+	padding: 0.5em 0.75em;
+	border-radius: 8px;
+	background: #e0314922;
+	color: var(--text-error);
+	font-size: 0.9em;
+}
+
+.skillflow-wizard__composer {
+	display: flex;
+	gap: 0.5em;
+	align-items: flex-end;
+}
+
+.skillflow-wizard__composer textarea {
+	flex: 1 1 auto;
+	resize: vertical;
+	font-family: inherit;
+}
+
+.skillflow-wizard__actions {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5em;
+	padding-top: 0.5em;
+	border-top: 1px solid var(--background-modifier-border);
+}
+
+.skillflow-wizard__actions-right {
+	display: flex;
+	gap: 0.5em;
+}
+
+.skillflow-wizard__raw textarea {
+	width: 100%;
+	font-family: var(--font-monospace);
+	font-size: 0.85em;
+}
+
+.skillflow-wizard__raw-actions {
+	display: flex;
+	gap: 0.5em;
+	margin-top: 0.5em;
+}
+
+.skillflow-wizard__dryrun {
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.skillflow-wizard__dryrun-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.4em 0.75em;
+	background: var(--background-secondary);
+	font-size: 0.85em;
+	color: var(--text-muted);
+}
+
+.skillflow-wizard__dryrun pre {
+	margin: 0;
+	padding: 0.75em;
+	max-height: 14em;
+	overflow-y: auto;
+	white-space: pre-wrap;
+}
+
+/* Draft card (inside the create-skill wizard) */
+
+.skillflow-draft-card {
+	display: flex;
+	flex-direction: column;
+	gap: 0.6em;
+	padding: 0.9em;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	background: var(--background-secondary);
+}
+
+.skillflow-draft-card__head {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.6em;
+}
+
+.skillflow-draft-card__icon {
+	flex-shrink: 0;
+	width: 32px;
+	height: 32px;
+	border-radius: 7px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--background-modifier-border);
+}
+
+.skillflow-draft-card__name {
+	font-weight: 600;
+}
+
+.skillflow-draft-card__desc {
+	color: var(--text-muted);
+	font-size: 0.9em;
+}
+
+.skillflow-draft-card__badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4em;
+	align-items: center;
+}
+
+.skillflow-chip {
+	font-size: 0.8em;
+	padding: 0.2em 0.6em;
+	border-radius: 999px;
+	border: 1px solid var(--background-modifier-border);
+	color: var(--text-muted);
+}
+
+.skillflow-draft-card__risk {
+	display: flex;
+	gap: 0.5em;
+	padding: 0.6em 0.75em;
+	border-radius: 6px;
+	background: #e0314922;
+	color: var(--text-error);
+	font-size: 0.85em;
+}
+
+.skillflow-draft-card__risk ul {
+	margin: 0;
+	padding-left: 1em;
+}
+
+.skillflow-draft-card__risk-icon {
+	flex-shrink: 0;
+	margin-top: 0.1em;
+}
+
+.skillflow-draft-card__instructions pre {
+	white-space: pre-wrap;
+	background: var(--background-primary);
+	padding: 0.6em;
+	border-radius: 6px;
+	font-size: 0.85em;
+	margin: 0.4em 0;
+}
+
+.skillflow-draft-card__section-label {
+	font-size: 0.8em;
+	font-weight: 600;
+	color: var(--text-muted);
+	margin-top: 0.4em;
+}
+
+.skillflow-draft-card__meta {
+	font-size: 0.8em;
+	color: var(--text-faint);
+}
+
 /* Provider add/edit form */
 
 .skillflow-provider-form__hint {
