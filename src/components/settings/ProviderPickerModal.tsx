@@ -51,7 +51,9 @@ function ProviderPickerComponent({
 
 	const openProvider = (presetType: LLMProviderPresetType) => {
 		onClose();
-		new AddProviderModal(app, plugin, presetType).open();
+		new AddProviderModal(app, plugin, presetType, () => {
+			new ProviderPickerModal(app, plugin).open();
+		}).open();
 	};
 
 	return (
