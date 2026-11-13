@@ -5,7 +5,7 @@ import { Skill } from "../../types/skill.types";
 // that runs user-created Skills can run this one unmodified.
 export const BUILTIN_FIX_SPELLING: Skill = {
 	id: "builtin-fix-spelling",
-	name: "笔记拼接纠错",
+	name: "笔记纠错",
 	description: "检查并修正当前笔记（或选区）中的错别字、标点与语法问题",
 	icon: "spell-check",
 	version: "1.0.0",
@@ -23,7 +23,7 @@ export const BUILTIN_FIX_SPELLING: Skill = {
 // metadata here — the actual run lives in ./tagsSkill.ts.
 export const BUILTIN_ORGANIZE_TAGS_META = {
 	id: "builtin-organize-tags",
-	name: "自动整理标签",
+	name: "标签整理",
 	description: "阅读笔记内容，自动生成/补全标签，去重合并后写入 frontmatter 的 tags 字段",
 	icon: "tags",
 };
