@@ -3,7 +3,7 @@
 	"name": "SkillFlow",
 	"version": "0.0.1",
 	"minAppVersion": "1.4.0",
-	"description": "Turn AI Skills into one-click menu items inside Obsidian.",
+	"description": "Run LLM-powered AI skills as one-click menu actions on your notes — prompt automation and workflow shortcuts without opening a chat window.",
 	"author": "tcyeee",
 	"authorUrl": "",
 	"isDesktopOnly": true
