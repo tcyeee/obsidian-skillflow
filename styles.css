@@ -544,11 +544,6 @@
 	color: var(--text-error);
 }
 
-.skillflow-permission-badge[data-level="L3"] {
-	background: #7c3aed33;
-	color: var(--text-accent);
-}
-
 /* Create-skill wizard modal */
 
 .skillflow-wizard {

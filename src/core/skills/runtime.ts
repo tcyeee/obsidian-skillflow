@@ -1,27 +1,19 @@
 import { App, MarkdownView, Notice } from "obsidian";
 
-import { GithubPublishConfig } from "../../types/github.types";
 import { LLMProvider } from "../../types/provider.types";
 import { Skill } from "../../types/skill.types";
 
 import { ConfirmDiffModal } from "../../components/execution/ConfirmDiffModal";
-import { ConfirmPublishModal } from "../../components/execution/ConfirmPublishModal";
 import { ResultModal } from "../../components/execution/ResultModal";
-import { publishNoteAsPr } from "../publish/githubPublish";
 import { ensureFolder } from "./registry";
-import { buildTemplateVars, renderTemplate, TemplateVars } from "./template";
+import { buildTemplateVars, TemplateVars } from "./template";
 import { runDryRun } from "./wizard";
 
 // Implements TODO.md §8.4's execution flow for the modes that don't need the
 // (not-yet-built) agentic Tool Executor: a single LLM call against the
 // current note's context, then — for modify-class outputs — a diff preview
 // gated on skill.output.confirm before anything is written.
-export async function executeSkill(
-	app: App,
-	provider: LLMProvider,
-	skill: Skill,
-	githubConfig?: GithubPublishConfig,
-): Promise<void> {
+export async function executeSkill(app: App, provider: LLMProvider, skill: Skill): Promise<void> {
 	const view = app.workspace.getActiveViewOfType(MarkdownView);
 	if (!view || !view.file) {
 		new Notice("请先打开一篇笔记。");
@@ -47,55 +39,12 @@ export async function executeSkill(
 		case "new_note":
 			await createResultNote(app, skill, vars, result);
 			return;
-		case "github_pr":
-			publishToGithub(app, skill, vars, result, githubConfig);
-			return;
 		case "replace_target":
 		case "insert_after":
 		case "append":
 			applyModifyOutput(app, view, skill, skill.output.mode, vars, result);
 			return;
 	}
-}
-
-// L3: the target repo/branch/token are never read from the Skill itself —
-// only `output.path` (rendered through the same template vars as any other
-// mode) and the LLM's text result cross into this function. `confirm` is
-// intentionally not consulted here: unlike L2 writes, a GitHub publish
-// always shows the per-run confirmation modal before anything leaves the
-// vault.
-function publishToGithub(
-	app: App,
-	skill: Skill,
-	vars: TemplateVars,
-	result: string,
-	githubConfig?: GithubPublishConfig,
-): void {
-	if (!githubConfig) {
-		new Notice(`"${skill.name}" 需要先在设置的"GitHub 发布"里配置目标仓库。`);
-		return;
-	}
-	const path = renderTemplate(skill.output.path?.trim() || "{{title}}.md", vars);
-	const prTitle = `${skill.name}: ${vars.title || path}`;
-	const prBody = `由 SkillFlow Skill "${skill.name}" 从笔记 "${vars.title}" 生成。`;
-
-	new ConfirmPublishModal(app, skill.name, githubConfig, path, result, () => {
-		void publishNoteAsPr(githubConfig, { path, content: result, prTitle, prBody })
-			.then((publishResult) => {
-				const fragment = document.createDocumentFragment();
-				fragment.append("已创建 PR：");
-				const link = document.createElement("a");
-				link.href = publishResult.prUrl;
-				link.textContent = publishResult.prUrl;
-				link.target = "_blank";
-				link.rel = "noopener noreferrer";
-				fragment.append(link);
-				new Notice(fragment, 0);
-			})
-			.catch((error: unknown) => {
-				new Notice(`发布到 GitHub 失败: ${error instanceof Error ? error.message : String(error)}`);
-			});
-	}).open();
 }
 
 function applyModifyOutput(

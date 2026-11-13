@@ -52,7 +52,7 @@ function autoGrowTextarea(el: HTMLTextAreaElement | null): void {
 }
 
 function DraftCard({ draft }: { draft: SkillDraft }) {
-	const level = computePermissionLevel(draft.tools, draft.output.mode);
+	const level = computePermissionLevel(draft.tools);
 	return (
 		<div className="skillflow-draft-card">
 			<div className="skillflow-draft-card__head">
@@ -140,7 +140,7 @@ function CreateSkillWizard({ app, plugin, existingSkills, onSaved, onClose }: Cr
 		setBusy(true);
 		setWizardError(null);
 		try {
-			const result = await runWizardTurn(provider, history, existingIds, !!plugin.settings.github);
+			const result = await runWizardTurn(provider, history, existingIds);
 			setApiHistory([...history, { role: "assistant", content: result.rawContent }]);
 			setDisplayMessages((prev) => [...prev, { role: "assistant", text: result.assistantMessage }]);
 			if (result.kind === "draft") {

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { SettingsProvider } from "../../contexts/settings-context";
 import type SkillFlowPlugin from "../../main";
 
-import { GithubSection } from "./GithubSection";
 import { ProvidersSection } from "./ProvidersSection";
 import { SettingsNav, SettingsTabId } from "./SettingsNav";
 import { SettingsPlaceholder } from "./SettingsPlaceholder";
@@ -37,7 +36,6 @@ export function SettingsTabRoot({
 			{activeTab === "skills" && (
 				<SkillsSection app={app} plugin={plugin} onRequestProvidersTab={() => setActiveTab("providers")} />
 			)}
-			{activeTab === "github" && <GithubSection />}
 			{activeTab === "other" && (
 				<SettingsPlaceholder
 					icon="sliders-horizontal"
