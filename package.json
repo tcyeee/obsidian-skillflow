@@ -1,7 +1,8 @@
 {
 	"name": "skillflow",
 	"version": "0.0.1",
-	"description": "Turn AI Skills into one-click menu items inside Obsidian.",
+	"description": "Run LLM-powered AI skills as one-click menu actions on your notes — prompt automation and workflow shortcuts without opening a chat window.",
+	"keywords": ["obsidian", "obsidian-plugin", "ai", "llm", "automation", "prompt-engineering", "note-taking", "anthropic", "openai", "workflow-automation"],
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
