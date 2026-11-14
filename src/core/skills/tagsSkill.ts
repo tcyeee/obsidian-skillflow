@@ -72,7 +72,7 @@ export async function runOrganizeTagsSkill(app: App, provider: LLMProvider): Pro
 				{
 					role: "system",
 					content:
-						"你负责为 Obsidian 笔记生成标签。只输出一个 JSON 字符串数组，不要输出任何其他文字或解释，不要用 markdown 代码块包裹。标签要简短（1-4 个词或字），能概括笔记主题，3 到 8 个，不要重复，不要包含 # 前缀。",
+						"你负责为 Obsidian 笔记生成标签。只输出一个 JSON 字符串数组，不要输出任何其他文字或解释，不要用 markdown 代码块包裹。标签要简短（1-4 个词或字），能概括笔记主题，3 到 8 个，不要重复，不要包含 # 前缀。标签必须使用笔记正文所使用的语言（笔记是中文就用中文标签，是英文就用英文标签，是其他语言就用那种语言），不要擅自翻译成别的语言；已有标签仅供参考主题，其语言不应覆盖笔记正文的语言判断。",
 				},
 				{
 					role: "user",
