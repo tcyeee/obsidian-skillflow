@@ -1008,10 +1008,14 @@
 	background: var(--background-modifier-border);
 }
 
-/* Full-width mount point for the settings tab's React root; `setting-item`
- * is stripped (see SettingTab.tsx) because this is a single `render`-type
- * definition standing in for the whole panel, not a one-line setting row. */
-.skillflow-settings-tab-root {
+/* Full-width mount point for the settings tab's React root, rendered
+ * straight into the tab's own containerEl (see SettingTab.tsx's display()).
+ * Zeroes Obsidian's default tab padding since this panel owns its own
+ * nav/section layout rather than being a list of setting rows, but keeps a
+ * generous padding-top so the sub-tab nav doesn't sit flush against the
+ * settings modal's top edge. */
+.vertical-tab-content.skillflow-settings-tab-root {
 	display: block;
 	padding: 0;
+	padding-top: var(--size-4-12);
 }

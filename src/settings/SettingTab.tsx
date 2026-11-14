@@ -1,16 +1,18 @@
-import { App, PluginSettingTab, Setting, SettingDefinitionItem } from "obsidian";
+import { App, PluginSettingTab } from "obsidian";
 import { Root, createRoot } from "react-dom/client";
 
 import { SettingsTabRoot } from "../components/settings/SettingsTabRoot";
 import type { SettingsTabId } from "../components/settings/SettingsNav";
 import type SkillFlowPlugin from "../main";
 
-// Mirrors obsidian-yolo's SettingTab (src/settings/SettingTab.tsx): mounts a
-// React root into the row the declarative settings API hands us, and
-// remounts it whenever `update()` runs — triggered by `plugin.setSettings`
-// after a save, so the tab always reflects the latest data. The whole panel
-// is a single `render`-type definition because its content is one React
-// tree with its own sub-tab nav, not a list of discrete Setting rows.
+// The declarative settings API (getSettingDefinitions) always wraps a
+// definition in Obsidian's own .setting-group > .setting-items > .setting-item
+// scaffold, meant for discrete one-line settings rows. This panel is a whole
+// React tree with its own sub-tab nav, not a row, so instead we opt out
+// (getSettingDefinitions returns []) and fall back to the legacy imperative
+// display(), which hands us the tab's containerEl directly — no ancestor
+// wrapper to fight. The tradeoff: this tab won't appear in Obsidian's
+// built-in settings search.
 export class SkillFlowSettingTab extends PluginSettingTab {
 	plugin: SkillFlowPlugin;
 	private root: Root | null = null;
@@ -31,29 +33,20 @@ export class SkillFlowSettingTab extends PluginSettingTab {
 		this.update();
 	}
 
-	getSettingDefinitions(): SettingDefinitionItem[] {
-		return [
-			{
-				name: "SkillFlow",
-				render: (setting: Setting) => {
-					const containerEl = setting.settingEl;
-					containerEl.empty();
-					containerEl.removeClass("setting-item");
-					containerEl.addClass("skillflow-settings-tab-root");
+	getSettingDefinitions() {
+		return [];
+	}
 
-					this.root?.unmount();
-					this.root = createRoot(containerEl);
-					const initialTab = this.pendingInitialTab ?? undefined;
-					this.pendingInitialTab = null;
-					this.root.render(<SettingsTabRoot app={this.app} plugin={this.plugin} initialTab={initialTab} />);
+	display(): void {
+		const { containerEl } = this;
+		containerEl.empty();
+		containerEl.addClass("skillflow-settings-tab-root");
 
-					return () => {
-						this.root?.unmount();
-						this.root = null;
-					};
-				},
-			},
-		];
+		this.root?.unmount();
+		this.root = createRoot(containerEl);
+		const initialTab = this.pendingInitialTab ?? undefined;
+		this.pendingInitialTab = null;
+		this.root.render(<SettingsTabRoot app={this.app} plugin={this.plugin} initialTab={initialTab} />);
 	}
 
 	hide(): void {
