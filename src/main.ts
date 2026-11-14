@@ -50,7 +50,7 @@ export default class SkillFlowPlugin extends Plugin {
 	async setSettings(newSettings: SkillFlowSettings): Promise<void> {
 		this.settings = newSettings;
 		await this.saveData(this.settings);
-		this.settingTab?.display();
+		this.settingTab?.update();
 	}
 
 	private async showSkillsMenu(triggerEl: HTMLElement) {
