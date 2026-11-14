@@ -321,6 +321,32 @@
 	margin-bottom: 1.5em;
 }
 
+/* List <-> detail navigation: a classic "push" transition. The viewport
+   clips to one pane's width; the track underneath holds both panes
+   side-by-side at double width and slides by exactly one pane when the
+   detail view is active, so the detail pane slides in from the right while
+   the list slides out to the left (and the reverse going back). */
+.skillflow-skills__viewport {
+	overflow: hidden;
+}
+
+.skillflow-skills__track {
+	display: flex;
+	width: 200%;
+	transform: translateX(0);
+	transition: transform 0.22s ease;
+}
+
+.skillflow-skills__viewport[data-view="detail"] .skillflow-skills__track {
+	transform: translateX(-50%);
+}
+
+.skillflow-skills__pane {
+	width: 50%;
+	flex-shrink: 0;
+	min-width: 0;
+}
+
 .skillflow-skills__header {
 	display: flex;
 	align-items: flex-start;
@@ -488,6 +514,29 @@
 
 .skillflow-skill-row--empty:hover {
 	background: transparent;
+}
+
+/* Skill detail page */
+
+.skillflow-skill-detail__header {
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
+	margin-bottom: 1em;
+}
+
+.skillflow-skill-detail__header-title {
+	flex: 1 1 auto;
+	font-weight: 600;
+}
+
+.skillflow-skill-detail__card pre {
+	white-space: pre-wrap;
+	background: var(--background-primary);
+	padding: 0.6em;
+	border-radius: 6px;
+	font-size: 0.85em;
+	margin: 0.4em 0;
 }
 
 /* Permission level badge, shared by the skill list and the draft card */
@@ -959,10 +1008,14 @@
 	background: var(--background-modifier-border);
 }
 
-/* Full-width mount point for the settings tab's React root; `setting-item`
- * is stripped (see SettingTab.tsx) because this is a single `render`-type
- * definition standing in for the whole panel, not a one-line setting row. */
-.skillflow-settings-tab-root {
+/* Full-width mount point for the settings tab's React root, rendered
+ * straight into the tab's own containerEl (see SettingTab.tsx's display()).
+ * Zeroes Obsidian's default tab padding since this panel owns its own
+ * nav/section layout rather than being a list of setting rows, but keeps a
+ * generous padding-top so the sub-tab nav doesn't sit flush against the
+ * settings modal's top edge. */
+.vertical-tab-content.skillflow-settings-tab-root {
 	display: block;
 	padding: 0;
+	padding-top: var(--size-4-12);
 }
