@@ -44,32 +44,6 @@
 	display: flex;
 }
 
-/* Empty settings page placeholder */
-
-.skillflow-placeholder {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 0.6em;
-	padding: 3em 1.5em;
-	text-align: center;
-}
-
-.skillflow-placeholder__icon {
-	color: var(--text-faint);
-	width: 2em;
-	height: 2em;
-}
-
-.skillflow-placeholder__title {
-	font-weight: 600;
-}
-
-.skillflow-placeholder__desc {
-	color: var(--text-muted);
-	max-width: 32em;
-}
-
 /* Model providers settings */
 
 .skillflow-providers {

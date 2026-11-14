@@ -6,7 +6,6 @@ import type SkillFlowPlugin from "../../main";
 
 import { ProvidersSection } from "./ProvidersSection";
 import { SettingsNav, SettingsTabId } from "./SettingsNav";
-import { SettingsPlaceholder } from "./SettingsPlaceholder";
 import { SkillsSection } from "./SkillsSection";
 
 // Renders from `plugin.settings` directly rather than local React state:
@@ -35,13 +34,6 @@ export function SettingsTabRoot({
 			{activeTab === "providers" && <ProvidersSection app={app} plugin={plugin} />}
 			{activeTab === "skills" && (
 				<SkillsSection app={app} plugin={plugin} onRequestProvidersTab={() => setActiveTab("providers")} />
-			)}
-			{activeTab === "other" && (
-				<SettingsPlaceholder
-					icon="sliders-horizontal"
-					title="Other settings"
-					description="There's nothing to configure here yet."
-				/>
 			)}
 		</SettingsProvider>
 	);
