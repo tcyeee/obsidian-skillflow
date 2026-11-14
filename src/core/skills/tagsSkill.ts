@@ -26,8 +26,8 @@ function extractTagList(text: string): string[] {
 	const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
 	const candidate = (fenced ? fenced[1] : text).trim();
 	try {
-		const parsed = JSON.parse(candidate);
-		if (Array.isArray(parsed)) return parsed.map(String);
+		const parsed: unknown = JSON.parse(candidate);
+		if (Array.isArray(parsed)) return parsed.map((item: unknown): string => String(item));
 	} catch {
 		// Not JSON — fall back to treating the response as a plain delimited list.
 	}
@@ -105,7 +105,7 @@ export async function runOrganizeTagsSkill(app: App, provider: LLMProvider): Pro
 		merged.join(", "),
 		() => {
 			void app.fileManager
-				.processFrontMatter(file, (fm) => {
+				.processFrontMatter(file, (fm: Record<string, unknown>) => {
 					fm.tags = merged;
 				})
 				.then(() => new Notice("已更新标签。"));

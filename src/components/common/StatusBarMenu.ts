@@ -93,13 +93,8 @@ export class StatusBarMenuManager {
 
 		// Width affects wrapping, so it must be fixed before height can be
 		// measured; render hidden at a throwaway position to get a real height.
-		popoverEl.setCssStyles({
-			position: "fixed",
-			top: "0px",
-			left: "0px",
-			width: `${POPOVER_WIDTH}px`,
-			visibility: "hidden",
-		});
+		popoverEl.addClass("skillflow-status-popover--measuring");
+		popoverEl.setCssStyles({ width: `${POPOVER_WIDTH}px` });
 		const height = popoverEl.getBoundingClientRect().height;
 
 		const spaceAbove = rect.top - POPOVER_GAP;
@@ -112,10 +107,10 @@ export class StatusBarMenuManager {
 			win.innerWidth - POPOVER_WIDTH - VIEWPORT_MARGIN,
 		);
 
+		popoverEl.removeClass("skillflow-status-popover--measuring");
 		popoverEl.setCssStyles({
 			top: `${Math.max(top, VIEWPORT_MARGIN)}px`,
 			left: `${left}px`,
-			visibility: "visible",
 		});
 	}
 

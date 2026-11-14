@@ -18,7 +18,7 @@ export default class SkillFlowPlugin extends Plugin {
 	private readonly statusBarMenu = new StatusBarMenuManager();
 
 	async onload() {
-		this.settings = { ...DEFAULT_SETTINGS, ...(await this.loadData()) };
+		this.settings = { ...DEFAULT_SETTINGS, ...((await this.loadData()) as Partial<SkillFlowSettings>) };
 
 		addIcon(SKILLFLOW_ICON_ID, SKILLFLOW_ICON_SVG);
 

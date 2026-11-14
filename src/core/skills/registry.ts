@@ -88,7 +88,9 @@ export async function updateSkill(app: App, skill: Skill, draft: SkillDraft): Pr
 
 export async function deleteSkill(app: App, skill: Skill): Promise<void> {
 	const folder = app.vault.getAbstractFileByPath(skill.folderPath);
-	if (folder) await app.fileManager.trashFile(folder);
+	// FileManager.trashFile requires Obsidian 1.6.6; Vault.trash has existed
+	// since 0.9.7, well under this plugin's minAppVersion.
+	if (folder) await app.vault.trash(folder, true);
 }
 
 /** Clones a skill under a fresh id/name so the user can tweak a copy without touching the original. */
