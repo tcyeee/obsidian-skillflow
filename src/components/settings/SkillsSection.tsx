@@ -1,5 +1,5 @@
 import { App, Menu, Notice, TFile } from "obsidian";
-import type { MouseEvent } from "react";
+import type { MouseEvent, TransitionEvent } from "react";
 import { useCallback, useEffect, useState } from "react";
 
 import { PERMISSION_LEVEL_INFO, computePermissionLevel } from "../../constants/skill-tools";
@@ -12,6 +12,7 @@ import { isProviderReady } from "../../utils/llm/provider-ready";
 import { ObsidianIcon } from "../common/ObsidianIcon";
 
 import { CreateSkillModal } from "./CreateSkillModal";
+import { SkillDetailSection } from "./SkillDetailSection";
 
 type SkillsSectionProps = {
 	app: App;
@@ -35,6 +36,12 @@ async function openSkillFile(app: App, skill: Skill): Promise<void> {
 export function SkillsSection({ app, plugin, onRequestProvidersTab }: SkillsSectionProps) {
 	const { settings } = useSettings();
 	const [skills, setSkills] = useState<Skill[] | null>(null);
+	// `detailSkill` is what the detail pane renders; `showDetail` is what
+	// drives the slide. Kept separate so going back keeps the old skill
+	// rendered (rather than blanking the pane) while the slide-out animation
+	// plays, and only clears it once the transition actually finishes.
+	const [detailSkill, setDetailSkill] = useState<Skill | null>(null);
+	const [showDetail, setShowDetail] = useState(false);
 
 	const refresh = useCallback(() => {
 		void listSkills(app).then(setSkills);
@@ -46,10 +53,22 @@ export function SkillsSection({ app, plugin, onRequestProvidersTab }: SkillsSect
 
 	const hasReadyProvider = settings.providers.some(isProviderReady);
 
+	const openDetail = (skill: Skill) => {
+		setDetailSkill(skill);
+		setShowDetail(true);
+	};
+
+	const closeDetail = () => setShowDetail(false);
+
+	const handleTrackTransitionEnd = (event: TransitionEvent<HTMLDivElement>) => {
+		if (event.propertyName === "transform" && !showDetail) setDetailSkill(null);
+	};
+
 	const handleDelete = (skill: Skill) => {
 		void (async () => {
 			await deleteSkill(app, skill);
 			new Notice(`已删除 "${skill.name}"`);
+			closeDetail();
 			refresh();
 		})();
 	};
@@ -59,6 +78,7 @@ export function SkillsSection({ app, plugin, onRequestProvidersTab }: SkillsSect
 			if (!skills) return;
 			await duplicateSkill(app, skill, skills);
 			new Notice(`已复制 "${skill.name}"`);
+			closeDetail();
 			refresh();
 		})();
 	};
@@ -86,97 +106,115 @@ export function SkillsSection({ app, plugin, onRequestProvidersTab }: SkillsSect
 
 	return (
 		<div className="skillflow-skills">
-			<div className="skillflow-skills__header">
-				<div>
-					<div className="skillflow-skills__title">Skills</div>
-					<div className="skillflow-skills__desc">
-						用一句话描述需求，AI 帮你生成可一键执行的 Skill。
+			<div className="skillflow-skills__viewport" data-view={showDetail ? "detail" : "list"}>
+				<div className="skillflow-skills__track" onTransitionEnd={handleTrackTransitionEnd}>
+					<div className="skillflow-skills__pane">
+						<div className="skillflow-skills__header">
+							<div>
+								<div className="skillflow-skills__title">Skills</div>
+								<div className="skillflow-skills__desc">
+									用一句话描述需求，AI 帮你生成可一键执行的 Skill。
+								</div>
+							</div>
+							<button
+								type="button"
+								className="mod-cta skillflow-skills__add"
+								disabled={!hasReadyProvider}
+								onClick={openCreateModal}
+							>
+								<ObsidianIcon icon="plus" />
+								新建 Skill
+							</button>
+						</div>
+
+						{!hasReadyProvider && (
+							<div className="skillflow-skills__nudge">
+								<ObsidianIcon icon="plug-zap" />
+								<span>创建 Skill 需要先配置一个可用的模型 Provider。</span>
+								<button type="button" className="skillflow-skills__nudge-action" onClick={onRequestProvidersTab}>
+									去添加 Provider
+								</button>
+							</div>
+						)}
+
+						{skills === null ? (
+							<div className="skillflow-skills__empty">加载中…</div>
+						) : (
+							<ul className="skillflow-skill-list">
+								{BUILTIN_SKILLS.map((builtin) => (
+									<li key={builtin.id} className="skillflow-skill-row skillflow-skill-row--locked">
+										<ObsidianIcon icon="lock" className="skillflow-skill-row__lock" />
+										<div className="skillflow-skill-row__icon">
+											<ObsidianIcon icon={builtin.icon} className="skillflow-skill-row__icon-svg" />
+										</div>
+										<div className="skillflow-skill-row__main">
+											<div className="skillflow-skill-row__name">{builtin.name}</div>
+											<div className="skillflow-skill-row__desc">{builtin.description}</div>
+										</div>
+										<div
+											className="skillflow-permission-badge"
+											data-level="L0"
+											title={PERMISSION_LEVEL_INFO.L0.desc}
+										>
+											{PERMISSION_LEVEL_INFO.L0.label}
+										</div>
+									</li>
+								))}
+								{skills.length === 0 && (
+									<li className="skillflow-skill-row skillflow-skill-row--empty">
+										<div className="skillflow-skill-row__main">
+											<div className="skillflow-skill-row__desc">
+												还没有自定义 Skill，点击"新建 Skill"，用一句话描述你想要的自动化操作。
+											</div>
+										</div>
+									</li>
+								)}
+								{skills.map((skill) => {
+									const level = computePermissionLevel(skill.tools);
+									return (
+										<li key={skill.id} className="skillflow-skill-row" onClick={() => openDetail(skill)}>
+											<div className="skillflow-skill-row__icon">
+												<ObsidianIcon icon={skill.icon} className="skillflow-skill-row__icon-svg" />
+											</div>
+											<div className="skillflow-skill-row__main">
+												<div className="skillflow-skill-row__name">{skill.name}</div>
+												<div className="skillflow-skill-row__desc">{skill.description}</div>
+											</div>
+											<div
+												className="skillflow-permission-badge"
+												data-level={level}
+												title={PERMISSION_LEVEL_INFO[level].desc}
+											>
+												{PERMISSION_LEVEL_INFO[level].label}
+											</div>
+											<button
+												type="button"
+												className="clickable-icon skillflow-skill-row__menu"
+												aria-label="Skill actions"
+												onClick={(event) => openRowMenu(event, skill)}
+											>
+												<ObsidianIcon icon="more-vertical" />
+											</button>
+										</li>
+									);
+								})}
+							</ul>
+						)}
+					</div>
+
+					<div className="skillflow-skills__pane">
+						{detailSkill && (
+							<SkillDetailSection
+								skill={detailSkill}
+								onBack={closeDetail}
+								onEdit={(skill) => void openSkillFile(app, skill)}
+								onDuplicate={handleDuplicate}
+								onDelete={handleDelete}
+							/>
+						)}
 					</div>
 				</div>
-				<button
-					type="button"
-					className="mod-cta skillflow-skills__add"
-					disabled={!hasReadyProvider}
-					onClick={openCreateModal}
-				>
-					<ObsidianIcon icon="plus" />
-					新建 Skill
-				</button>
 			</div>
-
-			{!hasReadyProvider && (
-				<div className="skillflow-skills__nudge">
-					<ObsidianIcon icon="plug-zap" />
-					<span>创建 Skill 需要先配置一个可用的模型 Provider。</span>
-					<button type="button" className="skillflow-skills__nudge-action" onClick={onRequestProvidersTab}>
-						去添加 Provider
-					</button>
-				</div>
-			)}
-
-			{skills === null ? (
-				<div className="skillflow-skills__empty">加载中…</div>
-			) : (
-				<ul className="skillflow-skill-list">
-					{BUILTIN_SKILLS.map((builtin) => (
-						<li key={builtin.id} className="skillflow-skill-row skillflow-skill-row--locked">
-							<ObsidianIcon icon="lock" className="skillflow-skill-row__lock" />
-							<div className="skillflow-skill-row__icon">
-								<ObsidianIcon icon={builtin.icon} className="skillflow-skill-row__icon-svg" />
-							</div>
-							<div className="skillflow-skill-row__main">
-								<div className="skillflow-skill-row__name">{builtin.name}</div>
-								<div className="skillflow-skill-row__desc">{builtin.description}</div>
-							</div>
-							<div
-								className="skillflow-permission-badge"
-								data-level="L0"
-								title={PERMISSION_LEVEL_INFO.L0.desc}
-							>
-								{PERMISSION_LEVEL_INFO.L0.label}
-							</div>
-						</li>
-					))}
-					{skills.length === 0 && (
-						<li className="skillflow-skill-row skillflow-skill-row--empty">
-							<div className="skillflow-skill-row__main">
-								<div className="skillflow-skill-row__desc">
-									还没有自定义 Skill，点击"新建 Skill"，用一句话描述你想要的自动化操作。
-								</div>
-							</div>
-						</li>
-					)}
-					{skills.map((skill) => {
-						const level = computePermissionLevel(skill.tools);
-						return (
-							<li key={skill.id} className="skillflow-skill-row" onClick={() => void openSkillFile(app, skill)}>
-								<div className="skillflow-skill-row__icon">
-									<ObsidianIcon icon={skill.icon} className="skillflow-skill-row__icon-svg" />
-								</div>
-								<div className="skillflow-skill-row__main">
-									<div className="skillflow-skill-row__name">{skill.name}</div>
-									<div className="skillflow-skill-row__desc">{skill.description}</div>
-								</div>
-								<div
-									className="skillflow-permission-badge"
-									data-level={level}
-									title={PERMISSION_LEVEL_INFO[level].desc}
-								>
-									{PERMISSION_LEVEL_INFO[level].label}
-								</div>
-								<button
-									type="button"
-									className="clickable-icon skillflow-skill-row__menu"
-									aria-label="Skill actions"
-									onClick={(event) => openRowMenu(event, skill)}
-								>
-									<ObsidianIcon icon="more-vertical" />
-								</button>
-							</li>
-						);
-					})}
-				</ul>
-			)}
 		</div>
 	);
 }
