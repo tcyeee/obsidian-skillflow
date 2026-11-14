@@ -43,8 +43,8 @@ export function ObsidianButton({ text, onClick, cta, warning }: ObsidianButtonPr
 		buttonComponent.setButtonText(text);
 		if (cta) buttonComponent.setCta();
 		else buttonComponent.buttonEl.removeClass("mod-cta");
-		if (warning) buttonComponent.setWarning();
-		else buttonComponent.buttonEl.removeClass("mod-warning");
+		if (warning) buttonComponent.setDestructive();
+		else buttonComponent.removeDestructive();
 	}, [buttonComponent, text, cta, warning]);
 
 	return <div ref={containerRef} />;

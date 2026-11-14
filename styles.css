@@ -958,3 +958,11 @@
 	margin: 4px 0;
 	background: var(--background-modifier-border);
 }
+
+/* Full-width mount point for the settings tab's React root; `setting-item`
+ * is stripped (see SettingTab.tsx) because this is a single `render`-type
+ * definition standing in for the whole panel, not a one-line setting row. */
+.skillflow-settings-tab-root {
+	display: block;
+	padding: 0;
+}
