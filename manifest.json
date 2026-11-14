@@ -1,7 +1,7 @@
 {
 	"id": "skillflow",
 	"name": "SkillFlow",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"minAppVersion": "1.4.0",
 	"description": "Run LLM-powered AI skills as one-click menu actions on your notes — prompt automation and workflow shortcuts without opening a chat window.",
 	"author": "tcyeee",
