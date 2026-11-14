@@ -1,11 +1,10 @@
 import { ObsidianIcon } from "../common/ObsidianIcon";
 
-export type SettingsTabId = "providers" | "skills" | "other";
+export type SettingsTabId = "providers" | "skills";
 
 const TABS: { id: SettingsTabId; label: string; icon: string }[] = [
 	{ id: "providers", label: "Add model", icon: "bot" },
 	{ id: "skills", label: "Manage skills", icon: "sparkles" },
-	{ id: "other", label: "Other settings", icon: "sliders-horizontal" },
 ];
 
 type SettingsNavProps = {
