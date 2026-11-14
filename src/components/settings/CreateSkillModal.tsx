@@ -47,7 +47,7 @@ const EXAMPLE_PROMPTS = ["一键把笔记翻译成英文", "把选中文字改�
 
 function autoGrowTextarea(el: HTMLTextAreaElement | null): void {
 	if (!el) return;
-	el.setCssStyles({ height: "auto" });
+	el.style.height = "";
 	el.setCssStyles({ height: `${el.scrollHeight}px` });
 }
 

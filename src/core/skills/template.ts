@@ -41,7 +41,11 @@ export function renderTemplate(instructions: string, vars: TemplateVars): string
 		if (key.startsWith("frontmatter.")) {
 			const field = key.slice("frontmatter.".length);
 			const value = vars.frontmatter[field];
-			return value === undefined ? "" : String(value);
+			if (value === undefined || value === null) return "";
+			if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+				return String(value);
+			}
+			return JSON.stringify(value);
 		}
 		return match;
 	});

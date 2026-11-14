@@ -915,6 +915,14 @@
 	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
+/* Throwaway state used to measure the popover's natural height before its
+   real position is known — kept out of the viewport and invisible. */
+.skillflow-status-popover--measuring {
+	top: 0;
+	left: 0;
+	visibility: hidden;
+}
+
 .skillflow-status-popover-row {
 	display: flex;
 	align-items: center;

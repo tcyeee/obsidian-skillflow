@@ -135,7 +135,7 @@ function ProviderFormComponent({
 	// with the form's current values after the user tweaks them.
 	useEffect(() => {
 		loadModels(formData);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally runs once on mount only; loadModels is re-invoked explicitly by the refresh button instead
 	}, []);
 
 	const fallbackModels = FALLBACK_MODELS_BY_PRESET[formData.presetType] ?? [];
