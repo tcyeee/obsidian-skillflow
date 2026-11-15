@@ -893,7 +893,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 0.75em;
-	min-width: 32em;
+	min-width: 48em;
 }
 
 .skillflow-confirm-diff__hint {
@@ -908,19 +908,46 @@
 }
 
 .skillflow-diff {
-	max-height: 24em;
-	overflow-y: auto;
 	border: 1px solid var(--background-modifier-border);
 	border-radius: 8px;
 	font-family: var(--font-monospace);
 	font-size: 0.85em;
+	overflow: hidden;
+}
+
+.skillflow-diff__header {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	border-bottom: 1px solid var(--background-modifier-border);
+	background: var(--background-secondary);
+	font-family: var(--font-interface);
+	font-size: 0.9em;
+	color: var(--text-muted);
+}
+
+.skillflow-diff__header span {
+	padding: 0.3em 0.6em;
+}
+
+.skillflow-diff__header span:last-child {
+	border-left: 1px solid var(--background-modifier-border);
+}
+
+.skillflow-diff__body {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	max-height: 24em;
+	overflow-y: auto;
 }
 
 .skillflow-diff__line {
-	display: flex;
-	gap: 0.5em;
 	padding: 0.1em 0.6em;
 	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+.skillflow-diff__body .skillflow-diff__line:nth-child(odd) {
+	border-right: 1px solid var(--background-modifier-border);
 }
 
 .skillflow-diff__line[data-op="add"] {
@@ -931,13 +958,41 @@
 .skillflow-diff__line[data-op="remove"] {
 	background: #e0314922;
 	color: var(--text-error);
+}
+
+.skillflow-diff__line[data-op="modify"] {
+	background: #d4a01722;
+}
+
+.skillflow-diff__line[data-op="blank"] {
+	background: repeating-linear-gradient(
+		45deg,
+		var(--background-modifier-border) 0,
+		var(--background-modifier-border) 1px,
+		transparent 1px,
+		transparent 7px
+	);
+	opacity: 0.5;
+}
+
+.skillflow-diff__seg[data-op="remove"] {
+	background: #e0314955;
 	text-decoration: line-through;
 }
 
-.skillflow-diff__marker {
-	flex-shrink: 0;
-	opacity: 0.7;
-	width: 1em;
+.skillflow-diff__seg[data-op="add"] {
+	background: #2ea04355;
+}
+
+@media (max-width: 640px) {
+	.skillflow-diff__header,
+	.skillflow-diff__body {
+		grid-template-columns: 1fr;
+	}
+
+	.skillflow-diff__body .skillflow-diff__line:nth-child(odd) {
+		border-right: none;
+	}
 }
 
 .skillflow-result pre {
