@@ -1,6 +1,7 @@
 import { App } from "obsidian";
+import { Fragment, useMemo } from "react";
 
-import { diffLines } from "../../utils/diff";
+import { CharSegment, diffSideBySide, SideCell } from "../../utils/diff";
 import { ReactModal } from "../common/ReactModal";
 
 type ConfirmDiffProps = {
@@ -9,18 +10,40 @@ type ConfirmDiffProps = {
 	onConfirm: () => void;
 };
 
+function DiffCell({ cell }: { cell: SideCell }) {
+	return (
+		<div className="skillflow-diff__line" data-op={cell.op}>
+			<span className="skillflow-diff__text">
+				{cell.segments ? cell.segments.map((seg, i) => <DiffSegment key={i} segment={seg} />) : cell.text || " "}
+			</span>
+		</div>
+	);
+}
+
+function DiffSegment({ segment }: { segment: CharSegment }) {
+	return (
+		<span className="skillflow-diff__seg" data-op={segment.op}>
+			{segment.text}
+		</span>
+	);
+}
+
 function DiffView({ before, after }: { before: string; after: string }) {
-	const lines = diffLines(before, after);
+	const rows = useMemo(() => diffSideBySide(before, after), [before, after]);
 	return (
 		<div className="skillflow-diff">
-			{lines.map((line, i) => (
-				<div key={i} className="skillflow-diff__line" data-op={line.op}>
-					<span className="skillflow-diff__marker">
-						{line.op === "add" ? "+" : line.op === "remove" ? "-" : " "}
-					</span>
-					<span className="skillflow-diff__text">{line.text || " "}</span>
-				</div>
-			))}
+			<div className="skillflow-diff__header">
+				<span>修改前</span>
+				<span>修改后</span>
+			</div>
+			<div className="skillflow-diff__body">
+				{rows.map((row, i) => (
+					<Fragment key={i}>
+						<DiffCell cell={row.left} />
+						<DiffCell cell={row.right} />
+					</Fragment>
+				))}
+			</div>
 		</div>
 	);
 }
